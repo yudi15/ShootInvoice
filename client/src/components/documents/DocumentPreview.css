@@ -1,0 +1,136 @@
+.document-preview {
+  background-color: white;
+  padding: 30px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  font-size: 14px;
+}
+
+.preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #eee;
+  padding-bottom: 20px;
+}
+
+.preview-title h2 {
+  color: #2c3e50;
+  margin-bottom: 5px;
+}
+
+.document-number {
+  color: #7f8c8d;
+  font-size: 16px;
+}
+
+.logo img {
+  max-height: 80px;
+  max-width: 200px;
+}
+
+.preview-metadata {
+  margin-bottom: 30px;
+}
+
+.preview-parties {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 30px;
+}
+
+.preview-from, .preview-to {
+  width: 48%;
+}
+
+.preview-from h3, .preview-to h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.preview-from p, .preview-to p {
+  margin: 5px 0;
+  color: #2c3e50;
+}
+
+.preview-items {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+}
+
+.preview-items th {
+  background-color: #f8f9fa;
+  padding: 10px;
+  text-align: left;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.preview-items td {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
+
+.preview-totals {
+  width: 40%;
+  margin-left: auto;
+  margin-bottom: 30px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+}
+
+.total-row.total {
+  font-weight: bold;
+  font-size: 16px;
+  border-top: 2px solid #eee;
+  padding-top: 10px;
+  margin-top: 10px;
+}
+
+.preview-notes, .preview-terms {
+  margin-bottom: 20px;
+}
+
+.preview-notes h3, .preview-terms h3 {
+  color: #2c3e50;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+.preview-footer {
+  margin-top: 30px;
+  text-align: center;
+  font-size: 12px;
+  color: #7f8c8d;
+  border-top: 1px solid #eee;
+  padding-top: 15px;
+}
+
+@media print {
+  .document-preview {
+    box-shadow: none;
+    padding: 0;
+  }
+  
+  body * {
+    visibility: hidden;
+  }
+  
+  .document-preview, .document-preview * {
+    visibility: visible;
+  }
+  
+  .document-preview {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+} 

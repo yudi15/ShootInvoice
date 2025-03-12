@@ -1,0 +1,22 @@
+.document-email-page {
+  padding: 20px 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.document-info {
+  background-color: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.document-info h2 {
+  margin-bottom: 10px;
+  text-transform: capitalize;
+} 

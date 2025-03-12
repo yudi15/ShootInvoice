@@ -1,0 +1,19 @@
+.footer {
+  height: 60px; /* Set a fixed height */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #343a40;
+  color: #fff;
+  margin-top: auto;
+}
+
+.footer-content {
+  width: 100%;
+  text-align: center;
+}
+
+.text-muted {
+  color: rgba(255,255,255,0.6) !important;
+  font-size: 14px;
+} 

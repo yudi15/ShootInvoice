@@ -1,0 +1,116 @@
+/* Base styles */
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:Arial,sans-serif;background-color:#f5f5f5;color:#333;line-height:1.6}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 15px}
+
+/* Components */
+.btn{display:inline-block;padding:8px 16px;background:#5ac05a;color:#fff;border:none;border-radius:4px;cursor:pointer;text-decoration:none;text-align:center;font-size:16px}
+.btn:hover{background:#4caf50}
+.form-control{width:100%;padding:8px;border:1px solid #ddd;border-radius:4px;margin-bottom:10px}
+
+/* Add more minimized styles... */
+
+.btn-danger {
+  background-color: #eb4d4b;
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.btn-success {
+  background-color: #6ab04c;
+}
+
+.btn-success:hover {
+  background-color: #4b8a3a;
+}
+
+.card {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+input, select, textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 1rem;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.alert {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+
+.flex {
+  display: flex;
+}
+
+.justify-between {
+  justify-content: space-between;
+}
+
+.items-center {
+  align-items: center;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+/* Optimize font loading */
+@font-face {
+  font-family: 'Roboto';
+  /* Google Fonts are already being loaded from your HTML */
+  font-display: swap; /* Show fallback font immediately while custom font loads */
+}
+
+/* Alternative: just comment out or remove the src line */
+/*
+@font-face {
+  font-family: 'Your-Font';
+  src: url('/fonts/your-font.woff2') format('woff2');
+  font-display: swap;
+}
+*/
+
+/* Add this to improve rendering performance for large pages */
+.dashboard-documents, 
+.dashboard-charts,
+.document-form {
+  content-visibility: auto;
+  contain-intrinsic-size: 1px 5000px; /* Reserve approximate space */
+} 

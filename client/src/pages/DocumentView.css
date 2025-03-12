@@ -1,0 +1,42 @@
+.document-view-page {
+  padding: 20px 0;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-title h1 {
+  color: #2c3e50;
+  margin-bottom: 5px;
+  text-transform: capitalize;
+}
+
+.header-title p {
+  color: #7f8c8d;
+}
+
+.header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.document-preview-container {
+  margin-bottom: 30px;
+}
+
+.email-button-container {
+  display: flex;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 1.2rem;
+  color: #7f8c8d;
+} 

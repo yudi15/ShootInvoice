@@ -1,0 +1,23 @@
+.document-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.document-actions .btn {
+  flex: 1;
+  min-width: 120px;
+  text-align: center;
+  text-decoration: none;
+}
+
+@media (max-width: 768px) {
+  .document-actions {
+    flex-direction: column;
+  }
+  
+  .document-actions .btn {
+    width: 100%;
+  }
+} 
