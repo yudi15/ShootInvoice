@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { DocumentProvider } from "../context/DocumentContext";
 import DocumentContext from "../context/DocumentContext";
 import AuthContext from "../context/AuthContext";
@@ -10,14 +10,14 @@ import "./DocumentView.css";
 
 const DocumentViewContent = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const { getDocument, document, loading, error } = useContext(DocumentContext);
   const { user } = useContext(AuthContext);
   const [showEmailForm, setShowEmailForm] = useState(false);
 
   useEffect(() => {
     getDocument(id);
-  }, [id]);
+  }, [getDocument, id]);
 
   if (loading) return <div className="loading">Loading document...</div>;
   if (error) return <div className="alert alert-danger">{error}</div>;
