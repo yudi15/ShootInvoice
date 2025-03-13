@@ -8,6 +8,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.0",
     "chart.js": "^4.4.0",
+    "document-generator-client": "file:",
     "jspdf": "^2.5.1",
     "moment": "^2.29.4",
     "react": "^18.2.0",
@@ -43,4 +44,4 @@
     ]
   },
   "proxy": "http://localhost:5000"
-} 
+}
