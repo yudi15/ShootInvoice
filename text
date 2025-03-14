@@ -1,1 +1,115 @@
 Hello
+jsx***************************
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+
+const ThemeContext = createContext();
+
+// Define theme settings
+const getThemeOptions = (mode) => ({
+  palette: {
+    mode,
+    ...(mode === 'light'
+      ? {
+          // Light mode colors
+          primary: {
+            main: '#1976d2',
+          },
+          secondary: {
+            main: '#9c27b0',
+          },
+          background: {
+            default: '#f5f5f5',
+            paper: '#fff',
+          },
+        }
+      : {
+          // Dark mode colors
+          primary: {
+            main: '#90caf9',
+          },
+          secondary: {
+            main: '#ce93d8',
+          },
+          background: {
+            default: '#121212',
+            paper: '#1e1e1e',
+          },
+        }),
+  },
+});
+
+export function ThemeProvider({ children }) {
+  const [mode, setMode] = useState(() => {
+    const savedMode = localStorage.getItem('theme');
+    if (savedMode) return savedMode;
+    return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  });
+
+  useEffect(() => {
+    localStorage.setItem('theme', mode);
+    // Update the class on the html element
+    document.documentElement.classList.remove('light', 'dark');
+    document.documentElement.classList.add(mode);
+  }, [mode]);
+
+  // Listen for system theme changes
+  useEffect(() => {
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+    const handleChange = (e) => {
+      if (!localStorage.getItem('theme')) {
+        setMode(e.matches ? 'dark' : 'light');
+      }
+    };
+    mediaQuery.addEventListener('change', handleChange);
+    return () => mediaQuery.removeEventListener('change', handleChange);
+  }, []);
+
+  const theme = React.useMemo(() => createTheme(getThemeOptions(mode)), [mode]);
+
+  const toggleTheme = () => {
+    setMode(prevMode => prevMode === 'light' ? 'dark' : 'light');
+  };
+
+  return (
+    <ThemeContext.Provider value={{ mode, toggleTheme }}>
+      <MUIThemeProvider theme={theme}>
+        <CssBaseline />
+        {children}
+      </MUIThemeProvider>
+    </ThemeContext.Provider>
+  );
+}
+
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}
+***********************************************
+THEME TOGGLE JSX
+***********************************************
+import React from 'react';
+import { IconButton, Tooltip } from '@mui/material';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
+import { useTheme } from "../../contexts/ThemeContext";
+
+export function ThemeToggle() {
+  const { mode, toggleTheme } = useTheme();
+
+  return (
+    <Tooltip title={`Switch to ${mode === 'dark' ? 'light' : 'dark'} mode`}>
+      <IconButton 
+        onClick={toggleTheme}
+        color="inherit"
+        sx={{ ml: 1 }}
+      >
+        {mode === 'dark' ? <Brightness7Icon /> : <Brightness4Icon />}
+      </IconButton>
+    </Tooltip>
+  );
+}

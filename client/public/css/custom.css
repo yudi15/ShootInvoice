@@ -1,16 +1,108 @@
-/* Create this file and copy the content from revised-invoice/0/css/custom.css */ 
-@charset "utf-8";
-/* CSS Document */
-body {
+/* Base theme variables */
+:root {
+	/* Light theme colors */
+	--bg-color: #ffffff;
+	--text-color: #000000;
+	--header-bg: #5ac05a;
+	--content-bg: #ffffff;
+	--border-color: #dddddd;
+	--card-bg: #ffffff;
+	--input-bg: #ffffff;
+  }
+  
+  /* Dark theme variables */
+  html.dark {
+	/* Dark theme colors */
+	--bg-color: #121212;
+	--text-color: #ffffff;
+	--header-bg: #2d632d;
+	--content-bg: #1e1e1e;
+	--border-color: #333333;
+	--card-bg: #1e1e1e;
+	--input-bg: #2d2d2d;
+  }
+  
+  /* Base styles with high specificity */
+  html body {
+	background-color: var(--bg-color) !important;
+	color: var(--text-color) !important;
 	font-family: 'Roboto', sans-serif;
-	background: #eee;
-}
-.header-bg {
-	background: #5ac05a;
+  }
+  
+  /* Header styles */
+  html .header-bg {
+	background-color: var(--header-bg) !important;
+	color: #ffffff;
+	height: 120px;
+  }
+  
+  /* Content styles */
+  html .content-block,
+  html .content-block-grey {
+	background-color: var(--content-bg) !important;
+	border: 1px solid var(--border-color) !important;
+	color: var(--text-color) !important;
+  }
+  
+  /* Form elements */
+  html .form-control,
+  html .input-group-addon {
+	background-color: var(--input-bg) !important;
+	color: var(--text-color) !important;
+	border: 1px solid var(--border-color) !important;
+  }
+  
+  /* Table styles */
+  html .table {
+	background-color: var(--content-bg) !important;
+  }
+  
+  html .table td,
+  html .table th {
+	color: var(--text-color) !important;
+	border-color: var(--border-color) !important;
+  }
+  
+  /* Dark mode overrides with maximum specificity */
+  html.dark body {
+	background-color: var(--bg-color) !important;
+	color: var(--text-color) !important;
+  }
+  
+  html.dark .content-block,
+  html.dark .content-block-grey {
+	background-color: var(--content-bg) !important;
+	border-color: var(--border-color) !important;
+  }
+  
+  html.dark .form-control,
+  html.dark .input-group-addon {
+	background-color: var(--input-bg) !important;
+	color: var(--text-color) !important;
+	border-color: var(--border-color) !important;
+  }
+  
+  html.dark .table {
+	background-color: var(--content-bg) !important;
+  }
+  
+  /* Transitions */
+  * {
+	transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  .navbar-brand img {
+	height: 60px;
+  }
+  
+  /* Original invoice styles with theme variables */
+  .header-bg {
+	background: var(--header-bg);
 	color: #fff;
 	height: 120px;
-}
-.btn-login {
+  }
+  
+  .btn-login {
 	color: #fff;
 	border-color: #fff;
 	min-width: 140px;
@@ -18,276 +110,206 @@ body {
 	text-transform: uppercase;
 	font-weight: bold;
 	cursor: pointer;
-}
-.navbar-brand img {
+  }
+  
+  .navbar-brand img {
 	height: 60px;
-}
-.content-wrap {
+  }
+  
+  .content-wrap {
 	background: url(../img/grn-border.png) repeat-x center top;
-}
-.content-block {
-	background: #fff;
+  }
+  
+  .content-block {
+	background: var(--content-bg);
 	padding: 30px 30px;
-}
-.content-block-grey {
-	background: #f6f6f6;
+	border: 1px solid var(--border-color);
+  }
+  
+  .content-block-grey {
+	background: var(--content-bg);
 	padding: 40px 30px;
-	border:solid 1px #d9d9d9;
-}
-.input-group-addon {
-    border-radius: 0;
-	min-width:140px;
-}
-.input-group{
-	margin-bottom:-1px;
-}
-.form-control{
+	border: solid 1px var(--border-color);
+  }
+  
+  .input-group-addon {
 	border-radius: 0;
-}
-.select-logo{
-	width:225px;
-	height:120px;
-	text-align:center;
-	vertical-align:middle;
-	margin-bottom:20px;
-}
-.FileUpload {
+	min-width: 140px;
+  }
+  
+  .input-group {
+	margin-bottom: -1px;
+  }
+  
+  .form-control {
+	border-radius: 0;
+  }
+  
+  .select-logo {
+	width: 225px;
+	height: 120px;
+	text-align: center;
+	vertical-align: middle;
+	margin-bottom: 20px;
+  }
+  
+  .FileUpload {
 	opacity: 0;
-	width:100%;
-}
-.invoice-box {
-	background: #f5f5f5;
-	padding: 20px;
-}
-.form-group {
-	margin-top: 15px;
-}
-.form-control, .input-group-addon {
-    border: 1px solid #ddd;
-}
-h3 .form-control{
-	padding:10px;
-	font-size:1.5rem !important;
-	font-weight:bold;
-}
-h4 .form-control{
-	padding:5px 10px;
-	font-size:1rem !important;
-	font-weight:bold;
-}
-.form-service{
-	padding:10px;
-	font-size:32px !important;
-	height:70px !important;
-	text-align: left;
-	width: 200px;
-}
-.no-border{
-	border:0 !important;
-}
-.min-height{
-	min-height:70px;
-}
-footer{
-	margin-top:20px;
-	margin-bottom:20px;
-}
-footer p{
-	margin:5px;
-}
-
-footer i{
-	margin:20px 5px;
-	font-size: 28px !important;
-}
-
-.table thead th {
-    vertical-align: bottom;
-    border-bottom: 0px solid #e9ecef;
-	border-top: 0;
-}
-.table tr {
-    padding: .20rem ;
-    vertical-align: middle;
-    border-bottom: 1px solid #e9ecef;
-}
-.table tr:last-child {
-    border-bottom: 0;
-}
-.table label {
-    margin:0;
-	padding: .20rem ;
-}
-.light td:last-child {
-    background:#f6f6f6;
-}
-.light tr:last-child {
-    border-bottom: 1px solid #f6f6f6;
-}
-.light label {
-    margin:0;
-	padding: .70rem ;
-}
-.table td, .table th {
-    padding: .70rem;
-    vertical-align: middle;
-	border-top:0;
-    border-bottom: 0px solid #e9ecef;
-}
-.light{
-    background:#fff !important;
-}
-.light td{
-    border-left: 1px solid #ddd;
-	padding: .20rem;
-	border-bottom: 1px solid #ddd;
-}
-.table .form-control{
-    border:0;
-}
-.total{
-	font-weight:bold;
-	color:#000;
-	font-size:1.2rem
-}
-.btn-red{
-	background:#fff1f1;
-	margin:0 10px;
-}
-.modal h3{
-	font-size: 1.5rem !important;
-}
-.modal .table td, .table th {
-    padding: .70rem;
-    vertical-align: middle;
-    border-top: 1px solid #ddd;
-}
-.thead-light{
-	background:#eee !important;
-}
-.modal .input-group{
-	border: solid 1px #ccc;
-}
-.modal .input-group-addon{
-	border:0;
-}
-
-.form-signin {
-  max-width: 330px;
-  padding: 15px;
-  margin: 0 auto;
-}
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
-  margin-bottom: 10px;
-}
-.form-signin .checkbox {
-  font-weight: normal;
-}
-.form-signin .form-control {
-  position: relative;
-  height: auto;
-  -webkit-box-sizing: border-box;
-          box-sizing: border-box;
-  padding: 10px;
-  font-size: 16px;
-}
-.form-signin .form-control:focus {
-  z-index: 2;
-}
-.form-signin input[type="email"] {
-  margin-bottom: -1px;
-  border-bottom-right-radius: 0;
-  border-bottom-left-radius: 0;
-}
-.form-signin input[type="password"] {
-  margin-bottom: 10px;
-  border-top-left-radius: 0;
-  border-top-right-radius: 0;
-}
-.visible-md{
-		display: block;
-}
-.hidden-sm{
-		display: none !important;
-}
-
-
-@media(max-width:767px) {
-	
-.header-bg {
-    height: auto;
-	padding-top: 15px;
-	padding-bottom: 15px;
-}
-.navbar-brand {
-    display:block;
-	width:100%;
-	margin: 0;
-}
-.visible-md{
-		display: none!important;
-}
-.hidden-sm{
-		display: block!important;
-}
-.select-logo{
-	display: block;
-	margin: 0 auto 20px;
-}
-.navbar-brand img{
-    display:block;
-	margin: 0 auto;
-	height: 50px;
-	margin-bottom: 15px;
-}
-.form-inline {
-    margin: 0 auto;
-}
-.form-service {
-    font-size: 1.5rem !important;
-	margin-bottom:20px;
 	width: 100%;
-}
-}
-
-@media(max-width:345px) {
-.btn-login {
-    display: block;
-    width: auto;
-	margin: 5px auto;
-}
-}
-@media(max-width:344px) {
-.btn-login {
-    display: block;
-    min-width: 128px;
-	margin: 5px auto;
-}
-.form-inline {
-    margin: 0;
-	width:100%;
-}
-}
-@media(max-width:320px) {
-.btn-login {
-    display: block;
-    min-width: 128px;
-	margin: 5px auto;
-}
-.form-inline {
-    margin: 0;
-	width:100%;
-}
-}
-@media(max-width:319px) {
-.btn-login {
-    display: block;
-    width:100%;
-	margin: 5px auto;
-}
-.form-inline {
-    margin: 0;
-	width:100%;
-}
-}
+  }
+  
+  .invoice-box {
+	background: var(--content-bg);
+	padding: 20px;
+  }
+  
+  .form-group {
+	margin-top: 15px;
+  }
+  
+  .form-control, .input-group-addon {
+	background-color: var(--input-bg);
+	color: var(--text-color);
+	border: 1px solid var(--border-color);
+  }
+  
+  /* Table styles */
+  .table {
+	background-color: var(--content-bg);
+  }
+  
+  .table td,
+  .table th {
+	color: var(--text-color);
+	border-color: var(--border-color);
+	padding: .70rem;
+	vertical-align: middle;
+	border-top: 0;
+  }
+  
+  .table thead th {
+	vertical-align: bottom;
+	border-bottom: 0;
+	border-top: 0;
+  }
+  
+  .table tr {
+	padding: .20rem;
+	vertical-align: middle;
+	border-bottom: 1px solid var(--border-color);
+  }
+  
+  .table tr:last-child {
+	border-bottom: 0;
+  }
+  
+  .table label {
+	margin: 0;
+	padding: .20rem;
+  }
+  
+  .light td:last-child {
+	background: var(--content-bg);
+  }
+  
+  .light tr:last-child {
+	border-bottom: 1px solid var(--border-color);
+  }
+  
+  .light label {
+	margin: 0;
+	padding: .70rem;
+  }
+  
+  .light td {
+	border-left: 1px solid var(--border-color);
+	padding: .20rem;
+	border-bottom: 1px solid var(--border-color);
+  }
+  
+  .table .form-control {
+	border: 0;
+  }
+  
+  /* Other custom styles */
+  .total {
+	font-weight: bold;
+	color: var(--text-color);
+	font-size: 1.2rem;
+  }
+  
+  .btn-red {
+	background: #fff1f1;
+	margin: 0 10px;
+  }
+  
+  /* Form styles */
+  .form-signin {
+	max-width: 330px;
+	padding: 15px;
+	margin: 0 auto;
+  }
+  
+  .form-signin .form-control {
+	position: relative;
+	height: auto;
+	box-sizing: border-box;
+	padding: 10px;
+	font-size: 16px;
+  }
+  
+  /* Transitions */
+  * {
+	transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  }
+  
+  /* Media Queries */
+  @media(max-width:767px) {
+	.header-bg {
+	  height: auto;
+	  padding-top: 15px;
+	  padding-bottom: 15px;
+	}
+  
+	.navbar-brand {
+	  display: block;
+	  width: 100%;
+	  margin: 0;
+	}
+  
+	.navbar-brand img {
+	  display: block;
+	  margin: 0 auto;
+	  height: 50px;
+	  margin-bottom: 15px;
+	}
+  
+	.form-service {
+	  font-size: 1.5rem !important;
+	  margin-bottom: 20px;
+	  width: 100%;
+	}
+  }
+  
+  /* Dark mode overrides with maximum specificity */
+  html.dark .content-block,
+  html.dark .content-block-grey,
+  html.dark .invoice-box {
+	background-color: var(--content-bg) !important;
+	border-color: var(--border-color) !important;
+  }
+  
+  html.dark .form-control,
+  html.dark .input-group-addon {
+	background-color: var(--input-bg) !important;
+	color: var(--text-color) !important;
+	border-color: var(--border-color) !important;
+  }
+  
+  html.dark .table {
+	background-color: var(--content-bg) !important;
+  }
+  
+  html.dark .total {
+	color: var(--text-color) !important;
+  }
