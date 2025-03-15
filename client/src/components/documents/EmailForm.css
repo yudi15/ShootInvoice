@@ -11,6 +11,17 @@
   color: #2c3e50;
 }
 
+.dark .email-form input,
+.dark .email-form textarea {
+  background-color: #1b1e21;
+  color: #ffffff;
+}
+
+.dark .email-form label {
+  color: #ffffff;
+}
+
+
 .email-form {
   display: flex;
   flex-direction: column;

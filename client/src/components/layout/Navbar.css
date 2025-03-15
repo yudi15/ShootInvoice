@@ -181,7 +181,7 @@
 
 .collapse.show {
   display: block;
-  background-color: whitesmoke;
+  background-color: #7f8387;
   z-index: 1000;
 }
 
