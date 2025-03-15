@@ -80,11 +80,23 @@
   height: 250px;
 }
 
+.dark .dashboard-documents {
+  background-color: #1e1e1e;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(90, 192, 90, 0.1);
+}
+
 .dashboard-documents {
   background-color: white;
   padding: 20px;
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.dark .dashboard-documents h2 {
+  color: white;
+  margin-bottom: 20px;
 }
 
 .dashboard-documents h2 {

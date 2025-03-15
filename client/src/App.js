@@ -4,7 +4,6 @@ import { AuthProvider } from "./context/AuthContext";
 import PrivateRoute from "./components/routing/PrivateRoute";
 import Spinner from "./components/common/Spinner";
 import { ThemeProvider } from "./context/ThemeContext";
-import { ThemeToggle } from "./components/layout/ThemeToggle";
 import "./App.css";
 
 // Layouts
@@ -36,11 +35,6 @@ function App() {
       <AuthProvider>
         <Router>
           <div className="app bg-background text-foreground min-h-screen transition-colors duration-200">
-            {/* Theme Toggle Button */}
-            <div className="fixed top-4 right-4 z-50">
-              <ThemeToggle />
-            </div>
-
             <Navbar />
             <main className="main-content bg-background">
               <div className="container">
