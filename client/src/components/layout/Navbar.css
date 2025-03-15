@@ -73,7 +73,10 @@
 .navbar-toggler {
   border-color: rgba(255,255,255,0.5);
   cursor: pointer;
-  margin:auto;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+  background-color: forestgreen;
 }
 
 .navbar-toggler-icon {
@@ -92,6 +95,7 @@
   height: 60px;
   /* width: 150px; */
   padding: 0;
+  margin-right: 0;
 }
 
 .navbar-brand img {
@@ -131,16 +135,11 @@
   .navbar-collapse {
     margin-top: 1rem;
   }
-
   
   .navbar-brand {
-    padding-bottom: 75px !important;
-}
+    padding-bottom: 0 !important;
+  }
 
-.summary-item{
-  text-align: center;
-}
-  
   .navbar-nav {
     padding-top: 0.5rem;
     border-top: 1px solid rgba(255,255,255,0.1);

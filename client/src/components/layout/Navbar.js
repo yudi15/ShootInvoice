@@ -21,10 +21,16 @@ const Navbar = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+    setMenuOpen(false);
   };
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
+  };
+
+  // Close menu when clicking on a nav link
+  const closeMenu = () => {
+    setMenuOpen(false);
   };
 
   return (
@@ -47,10 +53,10 @@ const Navbar = () => {
             <div className="navbar-nav ml-auto">
               {isAuthenticated ? (
                 <>
-                  <Link to="/dashboard" className="nav-item nav-link">
+                  <Link to="/dashboard" className="nav-item nav-link" onClick={closeMenu}>
                     Dashboard
                   </Link>
-                  <Link to="/settings" className="nav-item nav-link">
+                  <Link to="/settings" className="nav-item nav-link" onClick={closeMenu}>
                     Settings
                   </Link>
                   <button onClick={handleLogout} className="btn btn-danger my-2 my-sm-0">
@@ -60,15 +66,15 @@ const Navbar = () => {
                 </>
               ) : (
                 <>
-                  <Link to="/auth" className="nav-item nav-link">
+                  <Link to="/auth" className="nav-item nav-link" onClick={closeMenu}>
                     Free Signup
                   </Link>
-                  <Link to="/auth" className="nav-item nav-link">
+                  <Link to="/auth" className="nav-item nav-link" onClick={closeMenu}>
                     Log In
                   </Link>
                 </>
               )}
-              <Link to="/classic-form" className="nav-item nav-link">Classic Form</Link>
+              <Link to="/classic-form" className="nav-item nav-link" onClick={closeMenu}>Classic Form</Link>
               {/* Theme Toggle positioned next to Classic Form */}
               <div className="nav-item nav-link theme-toggle-nav-item">
                 <ThemeToggle />

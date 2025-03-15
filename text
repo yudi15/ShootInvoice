@@ -4,6 +4,15 @@ https://www.olx.com.pk/item/lenovo-thinkpad-x1-carbon-core-i5-10th-gen-16gb-ram-
 https://www.olx.com.pk/item/lenovo-thinkpad-x1-carbon-gen8-i7-10th-16512-gb-iid-1099350238
 https://www.olx.com.pk/item/lenovo-x1-carbon-gen-8-core-i7-10th-gen-16gb-ram-4k-screen-10-by-10-iid-1098219211
 
+
+
+now I want two things from you. First of all I want you to comment each and 
+every file with a start of what it will do and why is it important 
+and then I want you to comment each file's complete code to what it is doing line by line
+
+now I want the very basic and first functionality for this application which is to land on the page with the document generator where the user will be able to 
+
+
 jsx***************************
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { ThemeProvider as MUIThemeProvider, createTheme } from '@mui/material/styles';
