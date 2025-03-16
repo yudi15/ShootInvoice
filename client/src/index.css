@@ -99,7 +99,7 @@ label {
 /* Optimize font loading */
 @font-face {
   font-family: 'Roboto';
-  /* Google Fonts are already being loaded from your HTML */
+  src: url('https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxKKTU1Kg.woff2') format('woff2');
   font-display: swap; /* Show fallback font immediately while custom font loads */
 }
 
