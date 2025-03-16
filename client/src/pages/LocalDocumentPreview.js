@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { generateLocalPdf } from '../utils/LocalPdfGenerator';
-import './DocumentPreview.css'; // Reuse existing styles
+import './LocalDocumentPreview.css'; // Reuse existing styles
 
 const LocalDocumentPreview = () => {
   const [document, setDocument] = useState(null);

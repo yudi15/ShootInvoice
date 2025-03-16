@@ -23,7 +23,6 @@ import NotFound from "./pages/NotFound";
 import DocumentEmailPage from "./pages/DocumentEmailPage";
 import ClassicForm from "./pages/ClassicForm";
 import DocumentHistory from "./pages/DocumentHistory";
-import DocumentPreview from "./pages/DocumentPreview";
 import LocalDocumentPreview from "./pages/LocalDocumentPreview";
 
 // Map existing components to lazily loaded names
