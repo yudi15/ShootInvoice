@@ -2,8 +2,10 @@ import React, { useState, useRef, useEffect, useContext } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import DocumentContext, { DocumentProvider } from '../context/DocumentContext';
+import { generateLocalPdf } from '../utils/LocalPdfGenerator';
 import './ClassicForm.css';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
+import axios from 'axios';
 
 // Define the default state structure outside the component
 const getDefaultFormState = () => ({
@@ -205,7 +207,7 @@ const ClassicFormContent = () => {
       img.src = dataUrl;
     });
   };
-
+  
   // Handle logo file selection
   const handleLogoChange = async (e) => {
     if (e.target.files && e.target.files[0]) {
@@ -475,19 +477,27 @@ const ClassicFormContent = () => {
   // Download invoice as PDF
   const handleDownload = async () => {
     try {
-      // First save the document to history
+      // First save the document to history in localStorage
       const saved = saveToHistory();
       if (!saved) {
         toast.error('Please save the invoice first');
         return;
       }
       
-      // Open the PDF preview in a new tab
-      window.open(`/document-preview?id=${documentData.id}`, '_blank');
-      toast.success('Invoice preview opened');
+      // Generate PDF using our local PDF generator
+      const pdf = await generateLocalPdf(documentData.id);
+      
+      // Save with meaningful filename
+      const filename = `${documentData.type}_${documentData.invoiceNumber}.pdf`;
+      pdf.save(filename);
+      
+      toast.success('PDF downloaded successfully');
     } catch (error) {
-      console.error('PDF generation failed:', error);
-      toast.error('Failed to open invoice preview');
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF: ' + error.message);
+      
+      // Fallback to preview
+      window.open(`/document-preview?id=${documentData.id}`, '_blank');
     }
   };
   
@@ -507,28 +517,28 @@ const ClassicFormContent = () => {
           {/* Left side - Logo upload */}
           <div className="logo-section">
             <div className="logo-upload" onClick={() => fileInput.current.click()}>
-              {logoPreview ? (
-                <img src={logoPreview} alt="Company Logo" />
-              ) : (
+                {logoPreview ? (
+                  <img src={logoPreview} alt="Company Logo" />
+                ) : (
                 <div className="logo-placeholder">+ Add Your Logo</div>
-              )}
-              <input 
-                type="file" 
-                ref={fileInput}
-                onChange={handleLogoChange}
-                accept="image/*"
-                style={{ display: 'none' }}
-              />
-            </div>
+                )}
+                <input 
+                  type="file" 
+                  ref={fileInput}
+                  onChange={handleLogoChange}
+                  accept="image/*"
+                  style={{ display: 'none' }}
+                />
+              </div>
             <div className="company-name-input">
-              <input 
-                type="text"
-                name="companyName"
-                value={documentData.companyName}
-                onChange={handleInputChange}
+                <input 
+                  type="text" 
+                  name="companyName"
+                  value={documentData.companyName}
+                  onChange={handleInputChange}
                 placeholder="Who is this from? (Company Name)"
                 className="company-name-field"
-              />
+                />
             </div>
           </div>
           
@@ -537,27 +547,27 @@ const ClassicFormContent = () => {
             <h1>INVOICE</h1>
             <div className="invoice-number">
               <label htmlFor="invoiceNumber">#</label>
-              <input 
-                type="text" 
+                  <input 
+                    type="text" 
                 id="invoiceNumber"
                 name="invoiceNumber"
                 value={documentData.invoiceNumber}
-                onChange={handleInputChange}
-              />
+                    onChange={handleInputChange}
+                  />
             </div>
           </div>
-        </div>
-        
+                </div>
+                
         <div className="invoice-body">
           <div className="invoice-details">
             <div className="invoice-detail-row">
               <div className="invoice-detail-label">Date</div>
               <div className="invoice-detail-value">
-                <input 
-                  type="date" 
-                  name="issueDate"
-                  value={documentData.issueDate}
-                  onChange={handleInputChange}
+                  <input 
+                    type="date" 
+                    name="issueDate"
+                    value={documentData.issueDate}
+                    onChange={handleInputChange}
                   placeholder="Invoice date"
                   className="date-input"
                 />
@@ -576,27 +586,27 @@ const ClassicFormContent = () => {
                   className="small-width-input"
                 />
               </div>
-            </div>
-            
+                </div>
+                
             <div className="invoice-detail-row">
               <div className="invoice-detail-label">Due Date</div>
               <div className="invoice-detail-value">
-                <input 
-                  type="date" 
-                  name="dueDate"
-                  value={documentData.dueDate}
-                  onChange={handleInputChange}
+                  <input 
+                    type="date" 
+                    name="dueDate"
+                    value={documentData.dueDate}
+                    onChange={handleInputChange}
                   placeholder="Payment due date"
                   className="date-input"
-                />
+                  />
               </div>
             </div>
             
             <div className="invoice-detail-row">
               <div className="invoice-detail-label">PO Number</div>
               <div className="invoice-detail-value">
-                <input 
-                  type="text" 
+                  <input 
+                    type="text" 
                   name="poNumber"
                   value={documentData.poNumber}
                   onChange={handleInputChange}
@@ -624,7 +634,7 @@ const ClassicFormContent = () => {
               <textarea 
                 name="shipTo"
                 value={documentData.shipTo}
-                onChange={handleInputChange}
+                    onChange={handleInputChange}
                 className="party-textarea"
                 placeholder="(optional)"
               />
@@ -649,7 +659,7 @@ const ClassicFormContent = () => {
                   />
                 </div>
                 <div className="item-col item-quantity">
-                  <input
+                  <input 
                     type="number"
                     value={item.quantity}
                     onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
@@ -694,11 +704,11 @@ const ClassicFormContent = () => {
               <textarea 
                 name="notes"
                 value={documentData.notes}
-                onChange={handleInputChange}
+                    onChange={handleInputChange}
                 className="notes-textarea"
                 placeholder="Notes - any relevant information not already covered"
-              />
-            </div>
+                  />
+                </div>
             
             <div className="terms-section">
               <div className="section-label">Terms</div>
@@ -722,8 +732,8 @@ const ClassicFormContent = () => {
               <div className="total-row tax-row">
                 <div className="total-label">
                   Tax
-                  <input
-                    type="number"
+                        <input 
+                          type="number" 
                     name="tax"
                     value={documentData.tax}
                     onChange={handleCalculationChange}
@@ -742,15 +752,15 @@ const ClassicFormContent = () => {
                     Discount
                     <div className="discount-input-container">
                       <span>{getCurrencySymbol()}</span>
-                      <input
-                        type="number"
+                        <input 
+                          type="number" 
                         name="discount"
                         value={documentData.discount}
                         onChange={handleCalculationChange}
                         className="discount-input"
                       />
-                      <button 
-                        type="button" 
+                        <button 
+                          type="button" 
                         className="remove-field-btn" 
                         onClick={toggleDiscount}
                         aria-label="Remove discount"
@@ -768,7 +778,7 @@ const ClassicFormContent = () => {
                   <div className="total-label">
                     <button type="button" className="add-discount-btn" onClick={toggleDiscount}>
                       + Discount
-                    </button>
+                        </button>
                   </div>
                   <div className="total-value"></div>
                 </div>
@@ -799,7 +809,7 @@ const ClassicFormContent = () => {
                   </div>
                   <div className="total-value">
                     {formatCurrency(documentData.shipping)}
-                  </div>
+            </div>
                 </div>
               ) : (
                 <div className="total-row">
@@ -815,8 +825,8 @@ const ClassicFormContent = () => {
               <div className="total-row grand-total">
                 <div className="total-label">Total</div>
                 <div className="total-value">{formatCurrency(documentData.total)}</div>
-              </div>
-              
+          </div>
+          
               <div className="total-row">
                 <div className="total-label">Amount Paid</div>
                 <div className="total-value">

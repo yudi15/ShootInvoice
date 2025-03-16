@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, Link } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { generateLocalPdf } from '../utils/LocalPdfGenerator';
 import './DocumentPreview.css'; // Reuse existing styles
 
 const LocalDocumentPreview = () => {
@@ -74,6 +75,30 @@ const LocalDocumentPreview = () => {
     return date.toLocaleDateString();
   };
   
+  // Generate PDF using our local PDF generator
+  const generatePdf = async (documentId) => {
+    try {
+      // Generate PDF using our local PDF generator
+      const pdf = await generateLocalPdf(documentId);
+      
+      // Get document data for filename
+      const savedDocuments = JSON.parse(localStorage.getItem('invoiceDocuments') || '[]');
+      const document = savedDocuments.find(doc => doc.id === documentId);
+      
+      // Save with meaningful filename
+      const filename = document ? 
+        `${document.type || 'invoice'}_${document.invoiceNumber || 'document'}.pdf` : 
+        'document.pdf';
+      
+      pdf.save(filename);
+      
+      toast.success('PDF downloaded successfully');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF: ' + error.message);
+    }
+  };
+  
   const handlePrint = () => {
     window.print();
   };
@@ -89,9 +114,14 @@ const LocalDocumentPreview = () => {
           Back to Invoice Form
         </Link>
         <h1>Invoice Preview</h1>
-        <button className="print-button" onClick={handlePrint}>
-          Print / Download PDF
-        </button>
+        <div className="preview-actions">
+          <button className="print-button" onClick={handlePrint} style={{ marginRight: '10px' }}>
+            Print
+          </button>
+          <button className="download-button" onClick={() => generatePdf(document.id)}>
+            Download PDF
+          </button>
+        </div>
       </div>
       
       <div className="document-preview">
@@ -173,7 +203,7 @@ const LocalDocumentPreview = () => {
           {document.tax > 0 && (
             <div className="total-row">
               <span>Tax:</span>
-              <span>{formatCurrency(document.tax, document.currency)}</span>
+              <span>{formatCurrency(document.subtotal * (document.tax / 100), document.currency)}</span>
             </div>
           )}
           {document.discount > 0 && (
