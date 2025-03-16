@@ -22,6 +22,9 @@ import UserSettings from "./pages/UserSettings";
 import NotFound from "./pages/NotFound";
 import DocumentEmailPage from "./pages/DocumentEmailPage";
 import ClassicForm from "./pages/ClassicForm";
+import DocumentHistory from "./pages/DocumentHistory";
+import DocumentPreview from "./pages/DocumentPreview";
+import LocalDocumentPreview from "./pages/LocalDocumentPreview";
 
 // Map existing components to lazily loaded names
 const HomePage = lazy(() => Promise.resolve({ default: Home }));
@@ -74,6 +77,8 @@ function App() {
                       }
                     />
                     <Route path="/classic-form" element={<ClassicForm />} />
+                    <Route path="/documents" element={<DocumentHistory />} />
+                    <Route path="/document-preview" element={<LocalDocumentPreview />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

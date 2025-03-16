@@ -1,127 +1,718 @@
 .classic-form-container {
   padding: 20px;
-  background-color: #fff;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  min-height: 100vh;
 }
 
-.content-block {
-  background-color: white;
-  padding: 30px;
+.invoice-form {
+  display: grid;
+  grid-template-columns: 1fr 250px;
+  grid-template-areas: 
+    "header sidebar"
+    "body sidebar";
+  gap: 20px;
+  max-width: 1100px;
+  margin: 0 auto;
+  background-color: var(--content-bg);
   border-radius: 8px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  position: relative;
+  overflow: hidden;
 }
 
-.select-logo {
+/* Print mode for PDF generation */
+.print-mode {
+  background-color: white !important;
+  color: black !important;
+  padding: 20px !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+}
+
+.print-mode .invoice-sidebar {
+  display: none !important;
+}
+
+.print-mode .remove-item-btn, 
+.print-mode .remove-field-btn,
+.print-mode .add-item-btn,
+.print-mode .add-discount-btn,
+.print-mode .add-shipping-btn {
+  display: none !important;
+}
+
+.print-mode input, 
+.print-mode textarea,
+.print-mode select {
+  border-color: #ddd !important;
+  background-color: white !important;
+  color: black !important;
+}
+
+/* Header section */
+.invoice-header {
+  grid-area: header;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 30px;
+}
+
+.logo-section {
+  width: 40%;
+}
+
+.logo-upload {
   width: 100%;
-  height: 120px;
+  height: 110px;
   border: 2px dashed #ccc;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  margin-bottom: 10px;
+  background-color: var(--input-bg);
+  border-radius: 5px;
   overflow: hidden;
-  position: relative;
 }
 
-.select-logo img {
+.logo-placeholder {
+  color: var(--text-muted);
+  font-size: 16px;
+}
+
+.logo-upload img {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
 }
 
-.form-service {
-  width: 200px;
-  margin-bottom: 15px;
+.invoice-title-section {
+  text-align: right;
 }
 
-.input-group {
+.invoice-title-section h1 {
+  margin: 0;
+  font-size: 32px;
+  color: var(--text-color);
+  font-weight: bold;
+}
+
+.invoice-number {
   display: flex;
-  margin-bottom: 15px;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
 }
 
-.input-group-addon {
-  background-color: #f8f9fa;
-  border: 1px solid #ced4da;
-  padding: 6px 12px;
-  border-radius: 4px 0 0 4px;
-  min-width: 120px;
+.invoice-number label {
+  margin-right: 5px;
+  font-size: 18px;
+}
+
+.invoice-number input {
+  width: 60px;
+  padding: 5px;
+  font-size: 18px;
+  text-align: right;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+/* Body section */
+.invoice-body {
+  grid-area: body;
+}
+
+.invoice-details {
+  margin-bottom: 30px;
+}
+
+.invoice-detail-row {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.invoice-detail-label {
+  width: 120px;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.invoice-detail-value {
+  flex: 1;
+}
+
+.invoice-detail-value input {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+.invoice-parties {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.party-label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: var(--text-color);
+}
+
+.party-textarea {
+  width: 100%;
+  height: 80px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+  resize: none;
+}
+
+.invoice-items {
+  margin-bottom: 30px;
+}
+
+.invoice-items-header {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  gap: 10px;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 8px;
+  margin-bottom: 10px;
+}
+
+.invoice-item-row {
+  display: grid;
+  grid-template-columns: 3fr 1fr 1fr 1fr;
+  gap: 10px;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.item-col {
+  padding: 5px;
+}
+
+.item-description textarea {
+  width: 100%;
+  height: 50px;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+  resize: none;
+}
+
+.item-quantity input,
+.item-rate input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+.currency-input {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.currency-input span {
+  padding: 0 8px;
+  background-color: var(--input-bg);
+  color: var(--text-muted);
+  border-right: 1px solid var(--border-color);
+}
+
+.currency-input input {
+  border: none;
+  padding: 8px;
+  width: 100%;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+.item-amount {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.item-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.remove-item-btn {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.remove-item-btn:hover {
+  transform: scale(1.2);
+}
+
+.add-item-row {
+  padding: 15px 0;
+}
+
+.add-item-btn {
+  padding: 8px 15px;
+  background-color: transparent;
+  color: #5ac05a;
+  border: 1px solid #5ac05a;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.add-item-btn:hover {
+  background-color: #5ac05a;
+  color: white;
+}
+
+.invoice-notes-terms {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.section-label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  color: var(--text-color);
+}
+
+.notes-textarea,
+.terms-textarea {
+  width: 100%;
+  height: 100px;
+  padding: 8px 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+  resize: none;
+}
+
+.invoice-totals {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.totals-rows {
+  width: 350px;
+}
+
+.total-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.total-label {
+  font-weight: 500;
   display: flex;
   align-items: center;
 }
 
-.input-group .form-control {
-  border-radius: 0 4px 4px 0;
-}
-
-table.table {
-  width: 100%;
-  margin-bottom: 20px;
-}
-
-.thead-light th {
-  background-color: #f8f9fa;
-  border-color: #dee2e6;
-}
-
-table input[type="text"],
-table input[type="number"] {
-  width: 100%;
-  padding: 6px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-}
-
-.text-right {
+.total-value {
+  font-weight: 500;
+  min-width: 100px;
   text-align: right;
 }
 
-.btn-success {
+.tax-row {
+  display: flex;
+  align-items: center;
+}
+
+.tax-input {
+  width: 50px;
+  padding: 4px;
+  margin: 0 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+}
+
+.discount-input-container,
+.shipping-input-container {
+  display: flex;
+  align-items: center;
+  margin-left: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.discount-input-container span,
+.shipping-input-container span {
+  padding: 0 5px;
+  color: var(--text-muted);
+  border-right: 1px solid var(--border-color);
+}
+
+.discount-input,
+.shipping-input {
+  width: 80px;
+  padding: 4px;
+  border: none;
+  background-color: var(--input-bg);
+  color: var(--text-color);
+}
+
+.remove-field-btn {
+  background: none;
+  border: none;
+  color: #ff4d4d;
+  font-size: 16px;
+  cursor: pointer;
+  padding: 0 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.add-discount-btn,
+.add-shipping-btn {
+  background: none;
+  border: none;
+  color: #5ac05a;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 500;
+}
+
+.grand-total {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.balance-due {
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.amount-paid {
+  width: 100%;
+  display: flex;
+}
+
+.amount-paid input {
+  padding: 4px 8px;
+}
+
+/* Sidebar section */
+.invoice-sidebar {
+  grid-area: sidebar;
+  padding: 20px;
+  background-color: var(--card-bg);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: fit-content;
+}
+
+.download-btn {
   background-color: #5ac05a;
-  border-color: #5ac05a;
-}
-
-.btn-success:hover {
-  background-color: #48a448;
-  border-color: #48a448;
-}
-
-.justify-content-between {
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
 }
 
-.d-flex {
+.download-btn:hover {
+  background-color: #4aa04a;
+}
+
+.currency-selector {
   display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.ml-auto {
-  margin-left: auto;
+.currency-selector label {
+  font-weight: 500;
 }
 
-.p-2 {
-  padding: 0.5rem;
+.currency-select {
+  padding: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--input-bg);
+  color: var(--text-color);
+  border-radius: 4px;
+  width: 100%;
 }
 
+.save-default-btn,
+.clear-form-btn {
+  background-color: transparent;
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.save-default-btn:hover,
+.clear-form-btn:hover {
+  background-color: var(--border-color);
+}
+
+.create-invoice-btn {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.create-invoice-btn:hover {
+  background-color: #2980b9;
+}
+
+.clear-form-btn {
+  color: #e74c3c;
+  border-color: #e74c3c;
+}
+
+.clear-form-btn:hover {
+  background-color: #e74c3c;
+  color: white;
+}
+
+/* Placeholder styling */
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
+  opacity: 0.7;
+}
+
+/* Dark mode specific styles */
+.dark .invoice-form {
+  background-color: var(--content-bg);
+}
+
+.dark .invoice-sidebar {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.dark .logo-placeholder {
+  color: #aaa;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #888;
+}
+
+/* Responsive design */
 @media (max-width: 768px) {
-  .justify-content-between {
+  .invoice-form {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "header"
+      "body"
+      "sidebar";
+    padding: 20px;
+  }
+
+  .invoice-header {
     flex-direction: column;
+    align-items: center;
+    gap: 20px;
   }
-  
-  .col-md-5, .col-md-6, .col-md-12 {
-    width: 100%;
-    margin-bottom: 15px;
-  }
-  
-  .input-group {
-    flex-direction: column;
-  }
-  
-  .input-group-addon {
-    border-radius: 4px 4px 0 0;
+
+  .logo-section {
     width: 100%;
   }
-  
-  .input-group .form-control {
-    border-radius: 0 0 4px 4px;
+
+  .invoice-title-section {
+    text-align: center;
+    width: 100%;
   }
+
+  .invoice-number {
+    justify-content: center;
+  }
+
+  .invoice-parties {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .invoice-notes-terms {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .invoice-totals {
+    justify-content: center;
+  }
+
+  .totals-rows {
+    width: 100%;
+  }
+
+  .invoice-items-header,
+  .invoice-item-row {
+    grid-template-columns: 2fr 1fr 1fr 1fr;
+  }
+}
+
+@media (max-width: 500px) {
+  .invoice-items-header,
+  .invoice-item-row {
+    font-size: 14px;
+    grid-template-columns: 2fr 1fr 1fr 0.8fr;
+  }
+
+  .invoice-detail-label {
+    width: 100px;
+  }
+
+  .item-col {
+    padding: 3px;
+  }
+  
+  .remove-item-btn {
+    font-size: 16px;
+  }
+}
+
+/* CSS Variables for theming */
+:root {
+  --bg-color: #f8f9fa;
+  --text-color: #333;
+  --text-muted: #6c757d;
+  --content-bg: #ffffff;
+  --card-bg: #f8f9fa;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+}
+
+html.dark {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --text-muted: #aaaaaa;
+  --content-bg: #1e1e1e;
+  --card-bg: #2c2c2c;
+  --border-color: #444;
+  --input-bg: #2d2d2d;
+}
+
+/* Adjust width for date inputs and small inputs */
+.date-input, .small-width-input {
+  max-width: 200px;
+  width: 100%;
+}
+
+/* Company name field styling */
+.company-name-input {
+  margin-top: 10px;
+  width: 100%;
+}
+
+.company-name-field {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+}
+
+/* Make sure currency inputs are properly sized */
+.currency-input input {
+  width: 90px;
+}
+
+/* Ensure proper styling for the date picker */
+.dark input[type="date"] {
+  background-color: #2d2d2d;
+  color: #e0e0e0;
+}
+
+input[type="date"] {
+  appearance: none;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: white;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator {
+  cursor: pointer;
+}
+
+/* History button styling */
+.history-btn {
+  display: inline-block;
+  padding: 10px 15px;
+  background-color: #f0f0f0;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.history-btn:hover {
+  background-color: #e0e0e0;
 } 
