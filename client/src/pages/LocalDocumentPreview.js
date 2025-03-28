@@ -1,58 +1,88 @@
-import React, { useState, useEffect } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { generateLocalPdf } from '../utils/LocalPdfGenerator';
-import './LocalDocumentPreview.css'; // Reuse existing styles
+/**
+ * LocalDocumentPreview.js
+ * 
+ * PURPOSE:
+ * This page provides a preview of an invoice/document stored in localStorage and
+ * offers options to print or download it as a PDF. It renders a visual representation
+ * of the invoice that matches the PDF output format.
+ * 
+ * IMPORTANCE:
+ * - Allows users to preview their documents before printing or downloading
+ * - Provides a consistent view that matches the final PDF output
+ * - Enables printing directly from the browser
+ * - Offers PDF download option without server involvement
+ * - Accesses document data exclusively from localStorage
+ */
 
+import React, { useState, useEffect } from 'react'; // Import React and hooks
+import { useLocation, Link } from 'react-router-dom'; // Import routing utilities
+import { toast } from 'react-toastify'; // Import toast notifications
+import { generateLocalPdf } from '../utils/LocalPdfGenerator'; // Import PDF generator utility
+import './LocalDocumentPreview.css'; // Import styling
+
+/**
+ * Component to preview and download/print documents from localStorage
+ */
 const LocalDocumentPreview = () => {
-  const [document, setDocument] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [logo, setLogo] = useState(null);
-  const location = useLocation();
-
+  // State management for component
+  const [document, setDocument] = useState(null); // Stores the document data
+  const [loading, setLoading] = useState(true); // Tracks loading state
+  const [error, setError] = useState(null); // Stores any error messages
+  const [logo, setLogo] = useState(null); // Stores the document logo
+  const location = useLocation(); // Access URL parameters
+  
+  // Load document data from localStorage when component mounts or URL changes
   useEffect(() => {
     const loadDocument = () => {
       try {
-        // Get document ID from URL
+        // Extract document ID from URL parameters
         const searchParams = new URLSearchParams(location.search);
         const documentId = searchParams.get('id');
         
+        // Handle missing document ID
         if (!documentId) {
           setError('Document ID not provided');
           setLoading(false);
           return;
         }
         
-        // Load document from localStorage
+        // Retrieve document from localStorage using the ID
         const savedDocuments = JSON.parse(localStorage.getItem('invoiceDocuments') || '[]');
         const documentToView = savedDocuments.find(doc => doc.id === documentId);
         
+        // Handle document not found
         if (!documentToView) {
           setError('Document not found');
           setLoading(false);
           return;
         }
         
-        // Load logo if exists
+        // Load logo for this document if it exists
         const savedLogo = localStorage.getItem(`invoiceLogoPreview_${documentId}`);
         if (savedLogo) {
           setLogo(savedLogo);
         }
         
+        // Update state with the found document
         setDocument(documentToView);
         setLoading(false);
       } catch (error) {
+        // Handle any errors during loading
         console.error('Error loading document from localStorage:', error);
         setError('Error loading document');
         setLoading(false);
       }
     };
     
+    // Execute the loading function
     loadDocument();
-  }, [location.search]);
+  }, [location.search]); // Re-run when URL changes
 
-  // Get currency symbol
+  /**
+   * Get the appropriate currency symbol
+   * @param {string} currency - Currency code
+   * @returns {string} - Currency symbol
+   */
   const getCurrencySymbol = (currency) => {
     const currencyMap = {
       'USD ($)': '$',
@@ -62,53 +92,78 @@ const LocalDocumentPreview = () => {
     return currencyMap[currency] || '$';
   };
   
-  // Format currency
+  /**
+   * Format numeric amount to currency string
+   * @param {number} amount - Amount to format
+   * @param {string} currency - Currency type
+   * @returns {string} - Formatted currency string
+   */
   const formatCurrency = (amount, currency) => {
     const symbol = getCurrencySymbol(currency);
     return `${symbol}${parseFloat(amount).toFixed(2)}`;
   };
   
-  // Format date
+  /**
+   * Format date to locale-specific string
+   * @param {string} dateString - ISO date string
+   * @returns {string} - Formatted date
+   */
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     const date = new Date(dateString);
     return date.toLocaleDateString();
   };
   
-  // Generate PDF using our local PDF generator
+  /**
+   * Generate and download PDF from document data
+   * @param {string} documentId - Document ID to generate PDF for
+   */
   const generatePdf = async (documentId) => {
     try {
-      // Generate PDF using our local PDF generator
+      // Generate PDF using the utility function
       const pdf = await generateLocalPdf(documentId);
       
-      // Get document data for filename
+      // Get document details for the filename
       const savedDocuments = JSON.parse(localStorage.getItem('invoiceDocuments') || '[]');
       const document = savedDocuments.find(doc => doc.id === documentId);
       
-      // Save with meaningful filename
+      // Create a meaningful filename
       const filename = document ? 
         `${document.type || 'invoice'}_${document.invoiceNumber || 'document'}.pdf` : 
         'document.pdf';
       
+      // Trigger PDF download
       pdf.save(filename);
       
+      // Show success message
       toast.success('PDF downloaded successfully');
     } catch (error) {
+      // Handle errors
       console.error('Error generating PDF:', error);
       toast.error('Failed to generate PDF: ' + error.message);
     }
   };
   
+  /**
+   * Trigger browser's print dialog
+   */
   const handlePrint = () => {
-    window.print();
+    window.print(); // Browser built-in print function
   };
   
+  // Display loading message while fetching data
   if (loading) return <div className="loading">Loading document...</div>;
+  
+  // Display error message if something went wrong
   if (error) return <div className="error-message">{error}</div>;
+  
+  // Display error if document wasn't found
   if (!document) return <div className="error-message">Document not found</div>;
 
+  // Main component render
   return (
     <div className="document-preview-container">
+      {/* Header with navigation and action buttons */}
       <div className="preview-header">
         <Link to="/classic-form" className="back-button">
           Back to Invoice Form
@@ -124,7 +179,9 @@ const LocalDocumentPreview = () => {
         </div>
       </div>
       
+      {/* Document preview section */}
       <div className="document-preview">
+        {/* Document header with title and logo */}
         <div className="preview-header">
           <div className="preview-title">
             <h2>{document.type.toUpperCase()}</h2>
@@ -136,14 +193,15 @@ const LocalDocumentPreview = () => {
                 src={logo} 
                 alt="Business Logo" 
                 onError={(e) => {
-                  e.target.onerror = null; 
-                  e.target.style.display = 'none';
+                  e.target.onerror = null; // Prevent infinite error loop
+                  e.target.style.display = 'none'; // Hide broken image
                 }}
               />
             </div>
           )}
         </div>
 
+        {/* Date information section */}
         <div className="preview-metadata">
           <div className="preview-dates">
             <p><strong>Date:</strong> {formatDate(document.issueDate)}</p>
@@ -156,6 +214,7 @@ const LocalDocumentPreview = () => {
           </div>
         </div>
 
+        {/* Business and client information section */}
         <div className="preview-parties">
           <div className="preview-from">
             <h3>From</h3>
@@ -174,6 +233,7 @@ const LocalDocumentPreview = () => {
           </div>
         </div>
 
+        {/* Items table */}
         <table className="preview-items">
           <thead>
             <tr>
@@ -195,6 +255,7 @@ const LocalDocumentPreview = () => {
           </tbody>
         </table>
 
+        {/* Totals section */}
         <div className="preview-totals">
           <div className="total-row">
             <span>Subtotal:</span>
@@ -236,6 +297,7 @@ const LocalDocumentPreview = () => {
           )}
         </div>
 
+        {/* Notes section */}
         {document.notes && (
           <div className="preview-notes">
             <h3>Notes</h3>
@@ -243,6 +305,7 @@ const LocalDocumentPreview = () => {
           </div>
         )}
 
+        {/* Terms and conditions section */}
         {document.terms && (
           <div className="preview-terms">
             <h3>Terms and Conditions</h3>
@@ -254,4 +317,4 @@ const LocalDocumentPreview = () => {
   );
 };
 
-export default LocalDocumentPreview; 
+export default LocalDocumentPreview; // Export component 

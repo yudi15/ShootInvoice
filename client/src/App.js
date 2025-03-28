@@ -24,6 +24,7 @@ import DocumentEmailPage from "./pages/DocumentEmailPage";
 import ClassicForm from "./pages/ClassicForm";
 import DocumentHistory from "./pages/DocumentHistory";
 import LocalDocumentPreview from "./pages/LocalDocumentPreview";
+import LocalHome from "./pages/LocalHome";
 
 // Map existing components to lazily loaded names
 const HomePage = lazy(() => Promise.resolve({ default: Home }));
@@ -78,6 +79,7 @@ function App() {
                     <Route path="/classic-form" element={<ClassicForm />} />
                     <Route path="/documents" element={<DocumentHistory />} />
                     <Route path="/document-preview" element={<LocalDocumentPreview />} />
+                    <Route path="/local" element={<LocalHome />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>

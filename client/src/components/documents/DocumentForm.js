@@ -203,7 +203,7 @@ const DocumentForm = ({ existingDocument = null }) => {
     if (formData._id) {
       try {
         await updateDocument(formData._id, formData);
-        toast.info('Document autosaved');
+        //toast.info('Document autosaved');
       } catch (err) {
         toast.error('Error autosaving document');
         console.error('Autosave error:', err);

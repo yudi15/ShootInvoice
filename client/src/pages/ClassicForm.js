@@ -474,29 +474,40 @@ const ClassicFormContent = () => {
     }
   };
   
-  // Download invoice as PDF
+  /**
+   * Generates and downloads a PDF of the current document
+   * Uses the LocalPdfGenerator utility to create a professional PDF
+   * from the document data stored in localStorage
+   */
   const handleDownload = async () => {
     try {
-      // First save the document to history in localStorage
+      // First ensure the document is saved to localStorage history
       const saved = saveToHistory();
       if (!saved) {
         toast.error('Please save the invoice first');
         return;
       }
       
-      // Generate PDF using our local PDF generator
+      // Generate PDF using our local PDF generator utility
+      // This creates a PDF directly from localStorage data without server interaction
       const pdf = await generateLocalPdf(documentData.id);
       
-      // Save with meaningful filename
+      // Create a meaningful filename with document type and number
       const filename = `${documentData.type}_${documentData.invoiceNumber}.pdf`;
+      
+      // Trigger the PDF download with the generated filename
       pdf.save(filename);
       
+      // Show success message to the user
       toast.success('PDF downloaded successfully');
     } catch (error) {
+      // Log the error for debugging
       console.error('Error generating PDF:', error);
+      
+      // Show error message to user
       toast.error('Failed to generate PDF: ' + error.message);
       
-      // Fallback to preview
+      // Fall back to opening the preview page if PDF generation fails
       window.open(`/document-preview?id=${documentData.id}`, '_blank');
     }
   };
