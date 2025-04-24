@@ -34,7 +34,7 @@ const getDefaultFormState = () => ({
   createdAt: new Date().toISOString()
 });
 
-const ClassicFormContent = () => {
+const ClassicFormContent = ({ existingDocument = null, onDocumentUpdated = null }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { generatePdfUrl, createDocument } = useContext(DocumentContext);
@@ -46,9 +46,48 @@ const ClassicFormContent = () => {
   // Initialize state with a function to prevent stale closures
   const [documentData, setDocumentData] = useState(() => {
     try {
-      // First check if we're editing a specific doc from URL
+      // First check if we have an existing document passed as a prop
+      if (existingDocument) {
+        console.log("Initial load - from existingDocument prop:", existingDocument);
+        
+        // Convert server document format to local format
+        const convertedDocument = {
+          id: existingDocument._id,
+          type: existingDocument.type,
+          invoiceNumber: existingDocument.number,
+          companyName: existingDocument.companyName || '',
+          issueDate: existingDocument.date,
+          paymentTerms: '',
+          dueDate: existingDocument.dueDate || '',
+          poNumber: '',
+          fromInfo: existingDocument.fromInfo || '',
+          billTo: existingDocument.client?.address || '',
+          shipTo: '',
+          items: existingDocument.items.map(item => ({
+            description: item.name,
+            quantity: item.quantity,
+            rate: item.price,
+            amount: item.subtotal
+          })),
+          notes: existingDocument.notes || '',
+          terms: existingDocument.terms || '',
+          subtotal: existingDocument.subtotal || 0,
+          tax: existingDocument.tax || 0,
+          discount: existingDocument.discount || 0,
+          shipping: existingDocument.shipping || 0,
+          total: existingDocument.total || 0,
+          amountPaid: 0,
+          balanceDue: existingDocument.total || 0,
+          currency: existingDocument.currency || 'USD ($)',
+          createdAt: existingDocument.createdAt || new Date().toISOString()
+        };
+        
+        return convertedDocument;
+      }
+      
+      // Then check if we're editing a specific doc from URL
       const searchParams = new URLSearchParams(location.search);
-      const documentId = searchParams.get('id');
+      const documentId = searchParams.get('id') || searchParams.get('edit');
       
       if (documentId) {
         // Load from history if we have an ID
@@ -120,7 +159,7 @@ const ClassicFormContent = () => {
   // Handle URL parameter changes (loading specific documents)
   useEffect(() => {
     const searchParams = new URLSearchParams(location.search);
-    const documentId = searchParams.get('id');
+    const documentId = searchParams.get('id') || searchParams.get('edit');
     
     if (documentId && documentId !== documentData.id) {
       console.log("URL changed, loading document:", documentId);
@@ -481,11 +520,18 @@ const ClassicFormContent = () => {
    */
   const handleDownload = async () => {
     try {
+      // Check internet connectivity
+      const isOnline = navigator.onLine;
+      
       // First ensure the document is saved to localStorage history
       const saved = saveToHistory();
       if (!saved) {
         toast.error('Please save the invoice first');
         return;
+      }
+      
+      if (!isOnline) {
+        toast.info('Internet Absent, Saving to LocalStorage');
       }
       
       // Generate PDF using our local PDF generator utility
@@ -512,12 +558,82 @@ const ClassicFormContent = () => {
     }
   };
   
-  // Handle create invoice button (just save to history)
-  const handleCreateInvoice = () => {
+  // Handle create invoice button (save to history and server if logged in)
+  const handleCreateInvoice = async () => {
+    // Check internet connectivity
+    const isOnline = navigator.onLine;
+    
+    // First save to local history
     if (saveToHistory()) {
-      toast.success('Invoice created successfully');
-      // Redirect to document history
-      navigate('/documents');
+      if (!isOnline) {
+        toast.info('Internet Absent, Saving to LocalStorage');
+        navigate('/documents');
+        return;
+      }
+      
+      // Check if user is logged in by checking if createDocument is available
+      if (createDocument) {
+        try {
+          toast.info('Internet Present, Saving on SERVER');
+          
+          // Format the document data to match server expectations
+          const serverDocumentData = {
+            type: documentData.type,
+            number: documentData.invoiceNumber,
+            date: documentData.issueDate,
+            dueDate: documentData.dueDate,
+            client: {
+              name: documentData.billTo.split('\n')[0] || 'Client',
+              address: documentData.billTo,
+              email: '',
+              phone: ''
+            },
+            items: documentData.items.map(item => ({
+              name: item.description,
+              description: '',
+              quantity: item.quantity,
+              price: item.rate,
+              subtotal: item.amount
+            })),
+            subtotal: documentData.subtotal,
+            tax: documentData.tax,
+            discount: documentData.discount,
+            shipping: documentData.shipping,
+            total: documentData.total,
+            notes: documentData.notes,
+            terms: documentData.terms,
+            currency: documentData.currency,
+            fromInfo: documentData.fromInfo,
+            companyName: documentData.companyName
+          };
+          
+          // Create document on server
+          const createdDocument = await createDocument(serverDocumentData);
+          
+          if (createdDocument) {
+            toast.success('Document saved to your account');
+            
+            // If we have an onDocumentUpdated callback, call it
+            if (onDocumentUpdated) {
+              onDocumentUpdated(createdDocument);
+            } else {
+              // Otherwise redirect to document view
+              navigate(`/document/${createdDocument._id}`);
+            }
+          } else {
+            // If server save fails, just redirect to history
+            navigate('/documents');
+          }
+        } catch (error) {
+          console.error('Error saving document to server:', error);
+          toast.error('Failed to save document to your account');
+          // Redirect to history as fallback
+          navigate('/documents');
+        }
+      } else {
+        // If not logged in, just redirect to history
+        navigate('/documents');
+      }
     }
   };
   
@@ -556,15 +672,28 @@ const ClassicFormContent = () => {
           {/* Right side - Invoice title and number */}
           <div className="invoice-title-section">
             <h1>INVOICE</h1>
-            <div className="invoice-number">
-              <label htmlFor="invoiceNumber">#</label>
-                  <input 
-                    type="text" 
-                id="invoiceNumber"
-                name="invoiceNumber"
-                value={documentData.invoiceNumber}
-                    onChange={handleInputChange}
-                  />
+            <div className="invoice-number-currency">
+              <div className="invoice-number">
+                <label htmlFor="invoiceNumber">#</label>
+                <input 
+                  type="text" 
+                  id="invoiceNumber"
+                  name="invoiceNumber"
+                  value={documentData.invoiceNumber}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div className="header-currency-selector">
+                <label>Currency:</label>
+                <select 
+                  value={documentData.currency} 
+                  onChange={handleCurrencyChange}
+                >
+                  <option value="USD ($)">USD ($)</option>
+                  <option value="EUR (€)">EUR (€)</option>
+                  <option value="GBP (£)">GBP (£)</option>
+                </select>
+              </div>
             </div>
           </div>
                 </div>
@@ -866,19 +995,6 @@ const ClassicFormContent = () => {
             ↓ Download
           </button>
           
-          <div className="currency-selector">
-            <label>Currency</label>
-            <select 
-              value={documentData.currency} 
-              onChange={handleCurrencyChange}
-              className="currency-select"
-            >
-              <option value="USD ($)">USD ($)</option>
-              <option value="EUR (€)">EUR (€)</option>
-              <option value="GBP (£)">GBP (£)</option>
-            </select>
-          </div>
-          
           <button type="button" className="save-default-btn" onClick={saveDefault}>
             Save Default
           </button>
@@ -901,9 +1017,9 @@ const ClassicFormContent = () => {
 };
 
 // Wrap the export with DocumentProvider
-const ClassicForm = () => (
+const ClassicForm = (props) => (
   <DocumentProvider>
-    <ClassicFormContent />
+    <ClassicFormContent {...props} />
   </DocumentProvider>
 );
 

@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthContext from '../context/AuthContext';
 import './Auth.css';
@@ -11,34 +11,81 @@ const Auth = () => {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   
   const { processAuth, forgotPassword } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  // Clear error after 5 seconds
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        setError('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [error]);
+
+  // Clear success message after 5 seconds
+  useEffect(() => {
+    if (success) {
+      const timer = setTimeout(() => {
+        setSuccess('');
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [success]);
+
+  const validateForm = () => {
+    if (!email) {
+      setError('Email is required');
+      return false;
+    }
+    if (!password) {
+      setError('Password is required');
+      return false;
+    }
+    if (!isLogin && !confirmPassword) {
+      setError('Please confirm your password');
+      return false;
+    }
+    if (!isLogin && password !== confirmPassword) {
+      setError('Passwords do not match');
+      return false;
+    }
+    if (!isLogin && password.length < 6) {
+      setError('Password must be at least 6 characters long');
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     
-    if (!isLogin && password !== confirmPassword) {
-      setError('Passwords do not match');
-      return;
-    }
+    if (!validateForm()) return;
     
     try {
       const result = await processAuth(email, password, isLogin);
       if (result.success) {
-        navigate('/dashboard');
+        setSuccess(isLogin ? 'Login successful!' : 'Registration successful!');
+        setTimeout(() => {
+          navigate('/dashboard');
+        }, 1000);
       } else {
-        setError(result.message);
+        setError(result.message || (isLogin ? 'Login failed' : 'Registration failed'));
       }
     } catch (err) {
-      setError(err.message || 'Authentication failed');
+      setError(err.response?.data?.message || err.message || 'Authentication failed');
     }
   };
 
   const handleForgotPassword = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
     
     if (!resetEmail) {
       setError('Please enter your email');
@@ -48,14 +95,25 @@ const Auth = () => {
     try {
       const result = await forgotPassword(resetEmail);
       if (result.success) {
-        alert('Password reset email sent. Please check your inbox.');
-        setShowForgotPassword(false);
+        setSuccess('Password reset email sent. Please check your inbox.');
+        setTimeout(() => {
+          setShowForgotPassword(false);
+        }, 2000);
       } else {
-        setError(result.message);
+        setError(result.message || 'Failed to send reset email');
       }
     } catch (err) {
-      setError(err.message || 'Failed to send reset email');
+      setError(err.response?.data?.message || err.message || 'Failed to send reset email');
     }
+  };
+
+  const switchMode = () => {
+    setIsLogin(!isLogin);
+    setError('');
+    setSuccess('');
+    setEmail('');
+    setPassword('');
+    setConfirmPassword('');
   };
 
   return (
@@ -66,6 +124,9 @@ const Auth = () => {
         </div>
         
         <div className="auth-body">
+          {error && <div className="alert alert-danger" role="alert">{error}</div>}
+          {success && <div className="alert alert-success" role="alert">{success}</div>}
+          
           {showForgotPassword ? (
             <form onSubmit={handleForgotPassword}>
               <div className="form-group">
@@ -77,10 +138,10 @@ const Auth = () => {
                   onChange={(e) => setResetEmail(e.target.value)}
                   required
                   className="form-control"
+                  placeholder="Enter your email"
+                  autoComplete="email"
                 />
               </div>
-              
-              {error && <div className="alert alert-danger">{error}</div>}
               
               <div className="form-actions">
                 <button type="submit" className="btn btn-success btn-block">
@@ -89,7 +150,11 @@ const Auth = () => {
                 <button
                   type="button"
                   className="btn btn-link"
-                  onClick={() => setShowForgotPassword(false)}
+                  onClick={() => {
+                    setShowForgotPassword(false);
+                    setError('');
+                    setSuccess('');
+                  }}
                 >
                   Back to Login
                 </button>
@@ -106,6 +171,8 @@ const Auth = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   required
                   className="form-control"
+                  placeholder="Enter your email"
+                  autoComplete="email"
                 />
               </div>
               
@@ -118,6 +185,8 @@ const Auth = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   required
                   className="form-control"
+                  placeholder={isLogin ? "Enter your password" : "Choose a password (min. 6 characters)"}
+                  autoComplete={isLogin ? "current-password" : "new-password"}
                 />
               </div>
               
@@ -131,11 +200,11 @@ const Auth = () => {
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
                     className="form-control"
+                    placeholder="Confirm your password"
+                    autoComplete="new-password"
                   />
                 </div>
               )}
-              
-              {error && <div className="alert alert-danger">{error}</div>}
               
               <div className="form-actions">
                 <button type="submit" className="btn btn-success btn-block">
@@ -147,7 +216,7 @@ const Auth = () => {
                 <button
                   type="button"
                   className="btn btn-link"
-                  onClick={() => setIsLogin(!isLogin)}
+                  onClick={switchMode}
                 >
                   {isLogin ? 'Need an account? Register' : 'Already have an account? Login'}
                 </button>
@@ -156,7 +225,11 @@ const Auth = () => {
                   <button
                     type="button"
                     className="btn btn-link"
-                    onClick={() => setShowForgotPassword(true)}
+                    onClick={() => {
+                      setShowForgotPassword(true);
+                      setError('');
+                      setSuccess('');
+                    }}
                   >
                     Forgot Password?
                   </button>

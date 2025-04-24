@@ -89,6 +89,23 @@ const DocumentSchema = new mongoose.Schema({
       ref: 'Document'
     }
   },
+  isLocal: {
+    type: Boolean,
+    default: false
+  },
+  localId: {
+    type: String
+  },
+  synced: {
+    type: Boolean,
+    default: false
+  },
+  fromInfo: String,
+  companyName: String,
+  currency: {
+    type: String,
+    default: 'USD ($)'
+  },
   createdAt: {
     type: Date,
     default: Date.now

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { DocumentProvider } from '../context/DocumentContext';
-import DocumentForm from '../components/documents/DocumentForm';
+import ClassicForm from './ClassicForm';
 import DocumentPreview from '../components/documents/DocumentPreview';
 import AuthContext from '../context/AuthContext';
 
@@ -23,7 +23,7 @@ const Home = () => {
             <div className="col-md-12">
               <div className="col-md-12 content-block">
                 {activeTab === 'form' ? (
-                  <DocumentForm onDocumentUpdated={handleDocumentUpdated} />
+                  <ClassicForm onDocumentUpdated={handleDocumentUpdated} />
                 ) : (
                   <div className="preview-container">
                     <DocumentPreview document={documentData} businessInfo={user?.businessInfo} />

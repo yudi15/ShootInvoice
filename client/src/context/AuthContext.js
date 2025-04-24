@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
+import { syncLocalDocumentsWithServer } from '../utils/localStorageSync';
 
 const AuthContext = createContext();
 
@@ -26,6 +27,9 @@ export const AuthProvider = ({ children }) => {
       const res = await axios.get('/api/users/profile');
       setUser(res.data);
       setIsAuthenticated(true);
+      
+      // Sync local documents with server after successful login
+      await syncLocalDocumentsWithServer(token);
     } catch (err) {
       console.error('Error loading user:', err.response?.data || err.message);
       logout();
@@ -45,6 +49,10 @@ export const AuthProvider = ({ children }) => {
         setToken(res.data.token);
         setUser(res.data.user);
         setIsAuthenticated(true);
+        
+        // Sync local documents with server after successful login
+        await syncLocalDocumentsWithServer(res.data.token);
+        
         return { success: true, msg: 'Login successful' };
       } else {
         // It's a registration

@@ -4,6 +4,7 @@ const PDFDocument = require('pdfmake');
 const nodemailer = require('nodemailer');
 const fs = require('fs');
 const path = require('path');
+const DocumentAsset = require('../models/DocumentAsset');
 
 // Set up email transporter
 const transporter = nodemailer.createTransport({
@@ -48,7 +49,14 @@ exports.createDocument = async (req, res) => {
 // Get all documents for a user
 exports.getUserDocuments = async (req, res) => {
   try {
-    const documents = await Document.find({ userId: req.user.id }).sort({ createdAt: -1 });
+    // Find documents with either userId or user field matching the user's ID
+    const documents = await Document.find({
+      $or: [
+        { userId: req.user.id },
+        { user: req.user.id }
+      ]
+    }).sort({ createdAt: -1 });
+    
     res.json(documents);
   } catch (err) {
     console.error(err.message);
@@ -805,4 +813,121 @@ const createPdfDefinition = async (document, user) => {
       font: 'Helvetica'
     }
   };
+};
+
+// @desc    Sync local documents with server
+// @route   POST /api/documents/sync-local
+// @access  Private
+exports.syncLocalDocuments = async (req, res) => {
+  try {
+    const { documents, logos } = req.body;
+    const userId = req.user.id;
+    
+    if (!documents || !Array.isArray(documents)) {
+      return res.status(400).json({ success: false, msg: 'Invalid documents data' });
+    }
+    
+    const syncedIds = [];
+    
+    // Process each document
+    for (const doc of documents) {
+      // Check if document with localId already exists
+      const existingDoc = await Document.findOne({ 
+        user: userId, 
+        localId: doc.localId 
+      });
+      
+      if (existingDoc) {
+        // Update existing document
+        await Document.findByIdAndUpdate(existingDoc._id, {
+          type: doc.type,
+          number: doc.number,
+          date: doc.date,
+          dueDate: doc.dueDate,
+          client: doc.client,
+          items: doc.items,
+          subtotal: doc.subtotal,
+          tax: doc.tax,
+          discount: doc.discount,
+          shipping: doc.shipping,
+          total: doc.total,
+          notes: doc.notes,
+          terms: doc.terms,
+          currency: doc.currency,
+          fromInfo: doc.fromInfo,
+          companyName: doc.companyName,
+          isLocal: true,
+          synced: true
+        });
+        
+        syncedIds.push(doc.localId);
+      } else {
+        // Create new document
+        const newDoc = new Document({
+          user: userId,
+          type: doc.type,
+          number: doc.number,
+          date: doc.date,
+          dueDate: doc.dueDate,
+          client: doc.client,
+          items: doc.items,
+          subtotal: doc.subtotal,
+          tax: doc.tax,
+          discount: doc.discount,
+          shipping: doc.shipping,
+          total: doc.total,
+          notes: doc.notes,
+          terms: doc.terms,
+          currency: doc.currency,
+          fromInfo: doc.fromInfo,
+          companyName: doc.companyName,
+          isLocal: true,
+          localId: doc.localId,
+          synced: true
+        });
+        
+        await newDoc.save();
+        syncedIds.push(doc.localId);
+      }
+      
+      // Handle logo if provided
+      if (logos && logos[doc.localId]) {
+        // Store logo in user's document assets
+        const logoData = logos[doc.localId];
+        
+        // Check if logo already exists
+        const existingLogo = await DocumentAsset.findOne({
+          user: userId,
+          documentId: doc.localId,
+          type: 'logo'
+        });
+        
+        if (existingLogo) {
+          // Update existing logo
+          await DocumentAsset.findByIdAndUpdate(existingLogo._id, {
+            data: logoData
+          });
+        } else {
+          // Create new logo asset
+          const newLogo = new DocumentAsset({
+            user: userId,
+            documentId: doc.localId,
+            type: 'logo',
+            data: logoData
+          });
+          
+          await newLogo.save();
+        }
+      }
+    }
+    
+    res.json({ 
+      success: true, 
+      msg: `Successfully synced ${syncedIds.length} documents`,
+      syncedIds
+    });
+  } catch (err) {
+    console.error('Error syncing local documents:', err);
+    res.status(500).json({ success: false, msg: 'Server error' });
+  }
 }; 

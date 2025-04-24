@@ -1,5 +1,5 @@
 import React, { useEffect, useContext, useState, useCallback } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { DocumentProvider } from '../context/DocumentContext';
 import DocumentContext from '../context/DocumentContext';
 import AuthContext from '../context/AuthContext';
@@ -12,31 +12,97 @@ ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale, BarEle
 
 const DocumentList = () => {
   const { documents, getDocuments, loading, error } = useContext(DocumentContext);
+  const { isAuthenticated } = useContext(AuthContext);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [localDocuments, setLocalDocuments] = useState([]);
+  const [localLoading, setLocalLoading] = useState(false);
+  const location = useLocation();
 
   const handleSearch = useCallback((event) => {
     setSearchTerm(event.target.value);
   }, []);
 
+  // Load server documents
   useEffect(() => {
-    getDocuments();
+    if (isAuthenticated) {
+      getDocuments();
+    }
+  }, [isAuthenticated, getDocuments]);
+
+  // Load local documents
+  const loadLocalDocuments = useCallback(() => {
+    setLocalLoading(true);
+    try {
+      // Get documents from localStorage
+      const savedDocuments = JSON.parse(localStorage.getItem('invoiceDocuments') || '[]');
+      console.log('Loaded local documents:', savedDocuments.length);
+      
+      // Sort documents by date (newest first)
+      savedDocuments.sort((a, b) => {
+        const dateA = a.updatedAt || a.createdAt;
+        const dateB = b.updatedAt || b.createdAt;
+        return new Date(dateB) - new Date(dateA);
+      });
+      
+      setLocalDocuments(savedDocuments);
+    } catch (error) {
+      console.error('Error loading local documents:', error);
+    } finally {
+      setLocalLoading(false);
+    }
   }, []);
 
-  const filteredDocuments = documents.filter(doc => {
+  // Load local documents on mount and when location changes (user navigates back)
+  useEffect(() => {
+    loadLocalDocuments();
+  }, [loadLocalDocuments, location]);
+
+  // Add event listener for visibility change to refresh when tab becomes visible
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        loadLocalDocuments();
+      }
+    };
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [loadLocalDocuments]);
+
+  // Combine server and local documents
+  const allDocuments = [
+    ...documents,
+    ...localDocuments.map(doc => ({
+      ...doc,
+      _id: doc.id, // Use local ID as _id for consistency
+      isLocal: true, // Flag to identify local documents
+      source: 'Local' // Add source field
+    }))
+  ];
+
+  const filteredDocuments = allDocuments.filter(doc => {
     // Apply document type filter
     if (filter !== 'all' && doc.type !== filter) return false;
     
     // Apply search filter
-    if (searchTerm && !doc.client.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-        !doc.number.toLowerCase().includes(searchTerm.toLowerCase())) {
-      return false;
+    if (searchTerm) {
+      const clientName = doc.client?.name?.toLowerCase() || '';
+      const docNumber = doc.number?.toLowerCase() || doc.invoiceNumber?.toLowerCase() || '';
+      
+      if (!clientName.includes(searchTerm.toLowerCase()) && 
+          !docNumber.includes(searchTerm.toLowerCase())) {
+        return false;
+      }
     }
     
     return true;
   });
 
-  if (loading) return <div>Loading documents...</div>;
+  if (loading || localLoading) return <div>Loading documents...</div>;
   if (error) return <div className="alert alert-danger">{error}</div>;
 
   return (
@@ -65,7 +131,7 @@ const DocumentList = () => {
       {filteredDocuments.length === 0 ? (
         <div className="no-documents">
           <p>No documents found.</p>
-          <Link to="/" className="btn">Create New Document</Link>
+          <Link to="/classic-form" className="btn">Create New Document</Link>
         </div>
       ) : (
         <div className="document-list">
@@ -77,6 +143,7 @@ const DocumentList = () => {
                 <th>Client</th>
                 <th>Date</th>
                 <th>Total</th>
+                <th>Source</th>
                 <th>Actions</th>
               </tr>
             </thead>
@@ -84,17 +151,31 @@ const DocumentList = () => {
               {filteredDocuments.map(doc => (
                 <tr key={doc._id}>
                   <td className="doc-type">{doc.type}</td>
-                  <td>{doc.number}</td>
-                  <td>{doc.client.name}</td>
-                  <td>{new Date(doc.date).toLocaleDateString()}</td>
-                  <td>${doc.total.toFixed(2)}</td>
+                  <td>{doc.number || doc.invoiceNumber}</td>
+                  <td>{doc.client?.name || 'Client'}</td>
+                  <td>{new Date(doc.date || doc.issueDate).toLocaleDateString()}</td>
+                  <td>${(doc.total || 0).toFixed(2)}</td>
+                  <td>{doc.source || 'Server'}</td>
                   <td className="actions">
-                    <Link to={`/document/${doc._id}`} className="btn-view">
-                      <span>View</span>
-                    </Link>
-                    <Link to={`/document/edit/${doc._id}`} className="btn-edit">
-                      <span>Edit</span>
-                    </Link>
+                    {doc.isLocal ? (
+                      <>
+                        <Link to={`/document-preview?id=${doc.id}`} className="btn-view">
+                          <span>View</span>
+                        </Link>
+                        <Link to={`/classic-form?edit=${doc.id}`} className="btn-edit">
+                          <span>Edit</span>
+                        </Link>
+                      </>
+                    ) : (
+                      <>
+                        <Link to={`/document/${doc._id}`} className="btn-view">
+                          <span>View</span>
+                        </Link>
+                        <Link to={`/document/edit/${doc._id}`} className="btn-edit">
+                          <span>Edit</span>
+                        </Link>
+                      </>
+                    )}
                   </td>
                 </tr>
               ))}

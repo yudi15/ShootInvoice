@@ -74,8 +74,6 @@ const Navbar = () => {
                   </Link>
                 </>
               )}
-              <Link to="/classic-form" className="nav-item nav-link" onClick={closeMenu}>Classic Form</Link>
-              <Link to="/local" className="nav-item nav-link" onClick={closeMenu}>Local Form</Link>
               {/* Theme Toggle positioned next to Classic Form */}
               <div className="nav-item nav-link theme-toggle-nav-item">
                 <ThemeToggle />

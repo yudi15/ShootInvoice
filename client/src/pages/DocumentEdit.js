@@ -2,7 +2,7 @@ import React, { useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { DocumentProvider } from '../context/DocumentContext';
 import DocumentContext from '../context/DocumentContext';
-import DocumentForm from '../components/documents/DocumentForm';
+import ClassicForm from './ClassicForm';
 import { toast } from 'react-toastify';
 import './DocumentEdit.css';
 
@@ -30,7 +30,7 @@ const DocumentEditContent = () => {
         <h1>Edit Document</h1>
       </div>
       
-      <DocumentForm 
+      <ClassicForm 
         existingDocument={document} 
         onDocumentUpdated={handleDocumentUpdated} 
       />

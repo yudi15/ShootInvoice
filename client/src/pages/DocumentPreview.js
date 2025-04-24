@@ -1,8 +1,16 @@
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { toast } from 'react-toastify';
+import { FaDownload, FaArrowLeft } from 'react-icons/fa';
+import { useTheme } from '../context/ThemeContext';
+import { generateLocalPdf } from '../utils/LocalPdfGenerator';
+import './DocumentPreview.css';
+
 /**
- * HomeDocumentPreview.js
+ * DocumentPreview.js
  * 
  * PURPOSE:
- * This component displays a preview of the document created in the homepage form.
+ * This component displays a preview of documents created with the ClassicForm.
  * It shows how the document will look when downloaded as a PDF.
  * 
  * IMPORTANCE:
@@ -11,19 +19,14 @@
  * - Maintains consistent styling with the PDF output
  */
 
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import { FaDownload, FaArrowLeft } from 'react-icons/fa';
-import { useTheme } from '../../contexts/ThemeContext';
-
-const HomeDocumentPreview = () => {
+const DocumentPreview = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { isDarkMode } = useTheme();
   const [documentData, setDocumentData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [logoPreview, setLogoPreview] = useState(null);
 
   useEffect(() => {
     const loadDocument = () => {
@@ -38,7 +41,7 @@ const HomeDocumentPreview = () => {
         }
         
         // Get document from localStorage
-        const savedDocuments = JSON.parse(localStorage.getItem('homeDocuments') || '[]');
+        const savedDocuments = JSON.parse(localStorage.getItem('invoiceDocuments') || '[]');
         const document = savedDocuments.find(doc => doc.id === documentId);
         
         if (!document) {
@@ -47,6 +50,17 @@ const HomeDocumentPreview = () => {
         }
         
         setDocumentData(document);
+        
+        // Load logo if available
+        try {
+          const logoKey = `invoiceLogoPreview_${documentId}`;
+          const savedLogo = localStorage.getItem(logoKey);
+          if (savedLogo) {
+            setLogoPreview(savedLogo);
+          }
+        } catch (logoError) {
+          console.error('Error loading logo:', logoError);
+        }
       } catch (error) {
         console.error('Error loading document:', error);
         setError('Failed to load document');
@@ -62,9 +76,27 @@ const HomeDocumentPreview = () => {
     navigate(-1);
   };
 
-  const handleDownload = () => {
-    // Implement PDF download functionality here
-    toast.info('PDF download functionality will be implemented');
+  const handleDownload = async () => {
+    try {
+      if (!documentData || !documentData.id) {
+        toast.error('No document data available');
+        return;
+      }
+      
+      // Generate PDF using the local PDF generator
+      const pdf = await generateLocalPdf(documentData.id);
+      
+      // Create a meaningful filename
+      const filename = `${documentData.type}_${documentData.invoiceNumber}.pdf`;
+      
+      // Trigger the PDF download
+      pdf.save(filename);
+      
+      toast.success('PDF downloaded successfully');
+    } catch (error) {
+      console.error('Error generating PDF:', error);
+      toast.error('Failed to generate PDF');
+    }
   };
 
   if (isLoading) {
@@ -99,10 +131,13 @@ const HomeDocumentPreview = () => {
 
   // Format currency
   const formatCurrency = (amount) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: documentData.currency || 'USD'
-    }).format(amount);
+    const currencyMap = {
+      'USD ($)': '$',
+      'EUR (€)': '€',
+      'GBP (£)': '£'
+    };
+    const symbol = currencyMap[documentData.currency] || '$';
+    return `${symbol}${parseFloat(amount || 0).toFixed(2)}`;
   };
 
   // Format date
@@ -129,6 +164,11 @@ const HomeDocumentPreview = () => {
           {/* Document Header */}
           <div className="row mb-4">
             <div className="col-md-6">
+              {logoPreview && (
+                <div className="mb-3">
+                  <img src={logoPreview} alt="Company Logo" style={{ maxHeight: '60px' }} />
+                </div>
+              )}
               <h4 className="mb-3">{documentData.companyName}</h4>
               {documentData.fromInfo && (
                 <div className="text-muted">
@@ -140,8 +180,8 @@ const HomeDocumentPreview = () => {
             </div>
             <div className="col-md-6 text-md-end">
               <h2 className="mb-3">{documentData.type.toUpperCase()}</h2>
-              <div>Number: {documentData.number}</div>
-              <div>Date: {formatDate(documentData.date)}</div>
+              <div>Number: {documentData.invoiceNumber}</div>
+              <div>Date: {formatDate(documentData.issueDate)}</div>
               {documentData.dueDate && (
                 <div>Due Date: {formatDate(documentData.dueDate)}</div>
               )}
@@ -154,10 +194,13 @@ const HomeDocumentPreview = () => {
               <h5 className="mb-3">Client Information</h5>
               <div className="card">
                 <div className="card-body">
-                  {documentData.client.name && <div>Name: {documentData.client.name}</div>}
-                  {documentData.client.address && <div>Address: {documentData.client.address}</div>}
-                  {documentData.client.email && <div>Email: {documentData.client.email}</div>}
-                  {documentData.client.phone && <div>Phone: {documentData.client.phone}</div>}
+                  {documentData.billTo && (
+                    <div>
+                      {documentData.billTo.split('\n').map((line, index) => (
+                        <div key={index}>{line}</div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -171,21 +214,19 @@ const HomeDocumentPreview = () => {
                 <table className="table">
                   <thead>
                     <tr>
-                      <th>Item</th>
                       <th>Description</th>
                       <th className="text-center">Quantity</th>
-                      <th className="text-end">Price</th>
-                      <th className="text-end">Total</th>
+                      <th className="text-end">Rate</th>
+                      <th className="text-end">Amount</th>
                     </tr>
                   </thead>
                   <tbody>
                     {documentData.items.map((item, index) => (
                       <tr key={index}>
-                        <td>{item.name}</td>
                         <td>{item.description}</td>
                         <td className="text-center">{item.quantity}</td>
-                        <td className="text-end">{formatCurrency(item.price)}</td>
-                        <td className="text-end">{formatCurrency(item.subtotal)}</td>
+                        <td className="text-end">{formatCurrency(item.rate)}</td>
+                        <td className="text-end">{formatCurrency(item.amount)}</td>
                       </tr>
                     ))}
                   </tbody>
@@ -215,6 +256,12 @@ const HomeDocumentPreview = () => {
                       <td className="text-end">{formatCurrency(documentData.discount)}</td>
                     </tr>
                   )}
+                  {documentData.shipping > 0 && (
+                    <tr>
+                      <td>Shipping:</td>
+                      <td className="text-end">{formatCurrency(documentData.shipping)}</td>
+                    </tr>
+                  )}
                   <tr className="fw-bold">
                     <td>Total:</td>
                     <td className="text-end">{formatCurrency(documentData.total)}</td>
@@ -239,10 +286,26 @@ const HomeDocumentPreview = () => {
               </div>
             </div>
           )}
+
+          {/* Terms */}
+          {documentData.terms && (
+            <div className="row mt-4">
+              <div className="col-12">
+                <h5 className="mb-3">Terms and Conditions</h5>
+                <div className="card">
+                  <div className="card-body">
+                    {documentData.terms.split('\n').map((line, index) => (
+                      <div key={index}>{line}</div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
   );
 };
 
-export default HomeDocumentPreview; 
+export default DocumentPreview; 

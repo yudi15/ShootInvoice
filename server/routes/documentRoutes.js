@@ -19,6 +19,21 @@ router.get('/user', auth, documentController.getUserDocuments);
 // @access  Public
 router.get('/guest', documentController.getGuestDocuments);
 
+// @route   POST api/documents/convert
+// @desc    Convert document (Quotation -> Invoice -> Receipt)
+// @access  Public/Private (with ownership check)
+router.post('/convert', optionalAuth, documentController.convertDocument);
+
+// @route   POST api/documents/sync-local
+// @desc    Sync local documents with server
+// @access  Private
+router.post('/sync-local', auth, documentController.syncLocalDocuments);
+
+// Test endpoint to verify PDF route is working
+router.get('/test-pdf', (req, res) => {
+  res.send('PDF endpoint is accessible');
+});
+
 // @route   GET api/documents/:id
 // @desc    Get document by ID
 // @access  Public/Private (with ownership check)
@@ -33,16 +48,6 @@ router.put('/:id', optionalAuth, documentController.updateDocument);
 // @desc    Delete document
 // @access  Public/Private (with ownership check)
 router.delete('/:id', optionalAuth, documentController.deleteDocument);
-
-// @route   POST api/documents/convert
-// @desc    Convert document (Quotation -> Invoice -> Receipt)
-// @access  Public/Private (with ownership check)
-router.post('/convert', optionalAuth, documentController.convertDocument);
-
-// Test endpoint to verify PDF route is working
-router.get('/test-pdf', (req, res) => {
-  res.send('PDF endpoint is accessible');
-});
 
 // @route   GET api/documents/:documentId/pdf
 // @desc    Generate PDF

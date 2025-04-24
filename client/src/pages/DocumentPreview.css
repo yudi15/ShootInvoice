@@ -1,0 +1,205 @@
+/* DocumentPreview.css */
+
+/* Container styles */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Card styles */
+.card {
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  margin-bottom: 20px;
+}
+
+.card-body {
+  padding: 30px;
+}
+
+/* Header styles */
+h2 {
+  color: #2c3e50;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+h4 {
+  color: #34495e;
+  font-size: 20px;
+  font-weight: 500;
+}
+
+h5 {
+  color: #7f8c8d;
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+/* Table styles */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  background-color: transparent;
+}
+
+.table th {
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 1px;
+  padding: 12px;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table td {
+  padding: 12px;
+  vertical-align: middle;
+  border-bottom: 1px solid #dee2e6;
+}
+
+/* Button styles */
+.btn {
+  padding: 8px 16px;
+  border-radius: 4px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background-color: #3498db;
+  border-color: #3498db;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  border-color: #2980b9;
+}
+
+.btn-outline-primary {
+  color: #3498db;
+  border-color: #3498db;
+}
+
+.btn-outline-primary:hover {
+  background-color: #3498db;
+  color: white;
+}
+
+/* Dark mode styles */
+.bg-dark {
+  background-color: #2c3e50 !important;
+}
+
+.bg-dark .card {
+  background-color: #34495e;
+  border-color: #2c3e50;
+}
+
+.bg-dark .table th {
+  border-bottom-color: #2c3e50;
+}
+
+.bg-dark .table td {
+  border-bottom-color: #2c3e50;
+}
+
+.bg-dark h2 {
+  color: #ecf0f1;
+}
+
+.bg-dark h4 {
+  color: #bdc3c7;
+}
+
+.bg-dark h5 {
+  color: #95a5a6;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .card-body {
+    padding: 20px;
+  }
+  
+  .table-responsive {
+    margin-bottom: 1rem;
+  }
+  
+  .btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .d-flex {
+    flex-direction: column;
+  }
+  
+  .d-flex .btn {
+    margin-bottom: 10px;
+  }
+}
+
+/* Loading spinner styles */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+  border-width: 0.25em;
+}
+
+/* Alert styles */
+.alert {
+  padding: 15px;
+  margin-bottom: 20px;
+  border: 1px solid transparent;
+  border-radius: 4px;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+/* Logo styles */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Text styles */
+.text-muted {
+  color: #6c757d !important;
+}
+
+.text-end {
+  text-align: right !important;
+}
+
+.text-center {
+  text-align: center !important;
+}
+
+.fw-bold {
+  font-weight: 600 !important;
+}
+
+/* Utility classes */
+.mb-3 {
+  margin-bottom: 1rem !important;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem !important;
+}
+
+.mt-4 {
+  margin-top: 1.5rem !important;
+}
+
+.me-2 {
+  margin-right: 0.5rem !important;
+} 

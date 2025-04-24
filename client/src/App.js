@@ -23,13 +23,11 @@ import NotFound from "./pages/NotFound";
 import DocumentEmailPage from "./pages/DocumentEmailPage";
 import ClassicForm from "./pages/ClassicForm";
 import DocumentHistory from "./pages/DocumentHistory";
-import LocalDocumentPreview from "./pages/LocalDocumentPreview";
-import LocalHome from "./pages/LocalHome";
+import DocumentPreview from "./pages/DocumentPreview";
 
 // Map existing components to lazily loaded names
 const HomePage = lazy(() => Promise.resolve({ default: Home }));
 const AuthPage = lazy(() => Promise.resolve({ default: Auth }));
-const DocumentForm = lazy(() => import("./components/documents/DocumentForm"));
 const SettingsPage = lazy(() => Promise.resolve({ default: UserSettings }));
 
 function App() {
@@ -43,7 +41,7 @@ function App() {
               <div className="container">
                 <Suspense fallback={<Spinner />}>
                   <Routes>
-                    <Route path="/" element={<HomePage />} />
+                    <Route path="/" element={<ClassicForm />} />
                     <Route path="/auth" element={<AuthPage />} />
                     <Route path="/verify-email" element={<VerifyEmail />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
@@ -78,8 +76,7 @@ function App() {
                     />
                     <Route path="/classic-form" element={<ClassicForm />} />
                     <Route path="/documents" element={<DocumentHistory />} />
-                    <Route path="/document-preview" element={<LocalDocumentPreview />} />
-                    <Route path="/local" element={<LocalHome />} />
+                    <Route path="/document-preview" element={<DocumentPreview />} />
                     <Route path="*" element={<NotFound />} />
                   </Routes>
                 </Suspense>
