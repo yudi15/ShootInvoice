@@ -53,8 +53,8 @@ const Auth = () => {
       setError('Passwords do not match');
       return false;
     }
-    if (!isLogin && password.length < 6) {
-      setError('Password must be at least 6 characters long');
+    if (!isLogin && password.length < 3) {
+      setError('Password must be at least 3 characters long');
       return false;
     }
     return true;
@@ -75,10 +75,58 @@ const Auth = () => {
           navigate('/dashboard');
         }, 1000);
       } else {
-        setError(result.message || (isLogin ? 'Login failed' : 'Registration failed'));
+        // Handle specific error cases
+        const errorMessage = result.message?.toLowerCase() || '';
+        
+        if (isLogin) {
+          // Login specific errors
+          if (errorMessage.includes('password') || errorMessage.includes('credentials')) {
+            setError('Incorrect password. Please try again or use "Forgot Password" if you need to reset it.');
+          } else if (errorMessage.includes('not found') || errorMessage.includes('no user')) {
+            setError('Email not found. Please check your email or register for a new account.');
+          } else if (errorMessage.includes('verify')) {
+            setError('Please verify your email address. Check your inbox for the verification link.');
+          } else {
+            setError('Login failed. Please check your credentials and try again.');
+          }
+        } else {
+          // Registration specific errors
+          if (errorMessage.includes('exists') || errorMessage.includes('already registered') || errorMessage.includes('duplicate')) {
+            setError(
+              <div>
+                This email is already registered. 
+                <button 
+                  className="btn btn-link p-0 m-0 d-inline"
+                  onClick={() => {
+                    setShowForgotPassword(true);
+                    setError('');
+                  }}
+                  style={{ textDecoration: 'underline', marginLeft: '5px' }}
+                >
+                  Click here to reset your password
+                </button>
+              </div>
+            );
+          } else if (errorMessage.includes('password')) {
+            setError('Password is not strong enough. Please use at least 3 characters with a mix of letters and numbers.');
+          } else if (errorMessage.includes('email')) {
+            setError('Please enter a valid email address.');
+          } else {
+            setError('Registration failed. Please try again or contact support if the problem persists.');
+          }
+        }
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Authentication failed');
+      // Handle network or unexpected errors
+      if (!navigator.onLine) {
+        setError('No internet connection. Please check your network and try again.');
+      } else if (err.response?.status === 429) {
+        setError('Too many attempts. Please wait a few minutes and try again.');
+      } else if (err.response?.status === 500) {
+        setError('Server error. Please try again later or contact support if the problem persists.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Authentication failed. Please try again.');
+      }
     }
   };
 
@@ -88,22 +136,35 @@ const Auth = () => {
     setSuccess('');
     
     if (!resetEmail) {
-      setError('Please enter your email');
+      setError('Please enter your email address.');
       return;
     }
     
     try {
       const result = await forgotPassword(resetEmail);
       if (result.success) {
-        setSuccess('Password reset email sent. Please check your inbox.');
+        setSuccess('Password reset email sent! Please check your inbox and spam folder.');
         setTimeout(() => {
           setShowForgotPassword(false);
-        }, 2000);
+        }, 3000);
       } else {
-        setError(result.message || 'Failed to send reset email');
+        // Handle specific reset password errors
+        const errorMessage = result.message?.toLowerCase() || '';
+        
+        if (errorMessage.includes('not found') || errorMessage.includes('no user')) {
+          setError('No account found with this email. Please check the email or register for a new account.');
+        } else if (errorMessage.includes('recently')) {
+          setError('A reset email was recently sent. Please wait a few minutes before trying again.');
+        } else {
+          setError('Failed to send reset email. Please try again or contact support.');
+        }
       }
     } catch (err) {
-      setError(err.response?.data?.message || err.message || 'Failed to send reset email');
+      if (!navigator.onLine) {
+        setError('No internet connection. Please check your network and try again.');
+      } else {
+        setError(err.response?.data?.message || err.message || 'Failed to send reset email. Please try again.');
+      }
     }
   };
 
