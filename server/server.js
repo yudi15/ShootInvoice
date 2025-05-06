@@ -11,6 +11,16 @@ const compression = require("compression");
 
 const app = express();
 
+// Add this near the top after your requires
+const clientBuildPath = path.join(__dirname, "../client/build");
+const indexPath = path.resolve(__dirname, "../client/build", "index.html");
+
+console.log("Client build path:", clientBuildPath);
+console.log("Path exists?", {
+  buildDir: fs.existsSync(clientBuildPath),
+  indexFile: fs.existsSync(indexPath)
+});
+
 // Middleware
 app.use(cors());
 app.use(express.json());
@@ -59,10 +69,10 @@ app.use((req, res, next) => {
   next();
 });
 
-// Add a simple test route at the root level, before other routes
+/* Add a simple test route at the root level, before other routes
 app.get("/", (req, res) => {
   res.send("Server is running correctly");
-});
+});*/
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -75,13 +85,19 @@ mongoose
   .then(() => console.log("MongoDB connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
+// CORRECTED VERSION - Remove the extra closing brace
 // Serve static assets in production
 if (process.env.NODE_ENV === "production") {
+  console.log("Running in production mode - serving static files from client/build");
   app.use(express.static(path.join(__dirname, "../client/build")));
 
+  // This must be AFTER all other routes
   app.get("*", (req, res) => {
+    console.log("Serving index.html for path:", req.url);
     res.sendFile(path.resolve(__dirname, "../client/build", "index.html"));
   });
+} else {
+  console.log("Running in development mode");
 }
 
 // Add a redirect for incorrectly formatted logo paths

@@ -32,5 +32,16 @@
   "devDependencies": {
     "nodemon": "^3.0.1",
     "source-map-explorer": "^2.5.3"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/yudi15/ShootInvoice.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/yudi15/ShootInvoice/issues"
+  },
+  "homepage": "https://github.com/yudi15/ShootInvoice#readme"
 }
