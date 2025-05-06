@@ -260,55 +260,69 @@
 
 /* Amount paid styling */
 .amount-paid {
-  position: relative;
-  width: 150px;
+  width: 100%;
+  max-width: 150px;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
   display: flex;
   align-items: center;
 }
 
-.amount-paid input {
-  width: 100%;
-  padding: 8px 8px 8px 25px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background: var(--input-bg);
-  color: var(--text-color);
-  font-size: 0.9rem;
+.amount-paid span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
   height: 38px;
+  color: var(--text-color);
+  font-weight: 400;
+  background-color: var(--input-bg);
 }
 
-.amount-paid span {
-  position: absolute;
-  left: 8px;
+.amount-paid input {
+  border: none;
+  border-radius: 0;
+  padding: 8px 10px;
+  flex: 1;
+  background-color: var(--input-bg);
   color: var(--text-color);
-  font-size: 0.9rem;
-  pointer-events: none;
+  height: 38px;
 }
 
 /* Currency input styling */
 .currency-input {
   position: relative;
+  display: flex;
+  align-items: center;
+  background-color: var(--input-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  overflow: hidden;
   width: 100%;
 }
 
 .currency-input span {
-  position: absolute;
-  left: 8px;
-  top: 50%;
-  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 8px;
+  height: 38px;
   color: var(--text-color);
-  font-size: 0.9rem;
-  pointer-events: none;
+  font-weight: 400;
+  border-right: none;
+  background-color: var(--input-bg);
 }
 
 .currency-input input {
-  width: 100%;
-  padding: 8px 8px 8px 25px;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
-  background: var(--input-bg);
+  border: none;
+  border-radius: 0;
+  padding: 8px 10px;
+  flex: 1;
+  min-width: 0;
+  background-color: var(--input-bg);
   color: var(--text-color);
-  font-size: 0.9rem;
   height: 38px;
 }
 
@@ -619,96 +633,6 @@ textarea::placeholder {
   color: #888;
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .invoice-form {
-    padding: 20px;
-  }
-
-  .invoice-header {
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-  }
-
-  .logo-section {
-    width: 100%;
-  }
-
-  .invoice-title-section {
-    text-align: center;
-    width: 100%;
-  }
-
-  .invoice-number {
-    justify-content: center;
-  }
-
-  .invoice-parties {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .invoice-notes-terms {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  .invoice-totals {
-    justify-content: center;
-  }
-
-  .totals-rows {
-    width: 100%;
-  }
-
-  .invoice-items-header,
-  .invoice-item-row {
-    grid-template-columns: 2fr 1fr 1fr 1fr;
-  }
-}
-
-@media (max-width: 500px) {
-  .invoice-items-header,
-  .invoice-item-row {
-    font-size: 14px;
-    grid-template-columns: 2fr 1fr 1fr 0.8fr;
-  }
-
-  .invoice-detail-label {
-    width: 100px;
-  }
-
-  .item-col {
-    padding: 3px;
-  }
-  
-  .remove-item-btn {
-    font-size: 16px;
-  }
-}
-
-/* CSS Variables for theming */
-:root {
-  --bg-color: #f8f9fa;
-  --text-color: #333;
-  --text-muted: #6c757d;
-  --content-bg: #ffffff;
-  --card-bg: #f8f9fa;
-  --border-color: #dee2e6;
-  --input-bg: #ffffff;
-}
-
-html.dark {
-  --bg-color: #121212;
-  --text-color: #e0e0e0;
-  --text-muted: #aaaaaa;
-  --content-bg: #1e1e1e;
-  --card-bg: #2c2c2c;
-  --border-color: #444;
-  --input-bg: #2d2d2d;
-}
-
 /* Adjust width for date inputs and small inputs */
 .date-input, .small-width-input {
   max-width: 200px;
@@ -727,11 +651,6 @@ html.dark {
   border: 1px solid #ddd;
   border-radius: 4px;
   font-size: 14px;
-}
-
-/* Make sure currency inputs are properly sized */
-.currency-input input {
-  width: 90px;
 }
 
 /* Ensure proper styling for the date picker */
@@ -789,4 +708,161 @@ input[type="date"]::-webkit-datetime-edit-fields-wrapper {
 
 .history-btn:hover {
   background-color: #e0e0e0;
-} 
+}
+
+/* CSS Variables for theming */
+:root {
+  --bg-color: #f8f9fa;
+  --text-color: #333;
+  --text-muted: #6c757d;
+  --content-bg: #ffffff;
+  --card-bg: #f8f9fa;
+  --border-color: #dee2e6;
+  --input-bg: #ffffff;
+}
+
+html.dark {
+  --bg-color: #121212;
+  --text-color: #e0e0e0;
+  --text-muted: #aaaaaa;
+  --content-bg: #1e1e1e;
+  --card-bg: #2c2c2c;
+  --border-color: #444;
+  --input-bg: #2d2d2d;
+}
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .invoice-form {
+    padding: 20px;
+  }
+
+  .invoice-header {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .logo-section {
+    width: 100%;
+  }
+
+  .invoice-title-section {
+    align-items: center;
+    width: 100%;
+  }
+
+  .invoice-number-currency {
+    align-items: center;
+  }
+
+  .invoice-parties {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .invoice-notes-terms {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .invoice-totals {
+    justify-content: center;
+  }
+
+  .totals-rows {
+    width: 100%;
+  }
+}
+
+/* Mobile-specific style improvements */
+@media (max-width: 576px) {
+  /* Improved item rows display on mobile */
+  .invoice-items-header {
+    display: none; /* Hide header on mobile */
+  }
+
+  .invoice-item-row {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--card-bg);
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+    position: relative;
+  }
+
+  .item-col {
+    display: flex;
+    width: 100%;
+    padding: 6px 0;
+    min-height: auto;
+    align-items: center;
+  }
+
+  /* Add data labels for clarity */
+  .item-col:before {
+    content: attr(data-label);
+    font-weight: 500;
+    width: 80px;
+    flex-shrink: 0;
+    color: var(--text-muted);
+  }
+
+  /* Position the remove button absolutely */
+  .item-actions {
+    padding-right: 0;
+    justify-content: flex-start;
+  }
+
+  .item-col.item-actions:before {
+    content: attr(data-label);
+  }
+
+  .remove-item-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    margin: 0;
+  }
+
+  /* Better total rows display */
+  .total-row {
+    padding: 10px 0;
+  }
+
+  .tax-row, .discount-row, .shipping-row {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .tax-input, .discount-input, .shipping-input {
+    margin: 0 5px;
+  }
+
+  /* Improved sidebar buttons */
+  .invoice-sidebar {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .invoice-sidebar button,
+  .invoice-sidebar .currency-selector,
+  .invoice-sidebar .history-btn {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  /* Better styling for add item button on mobile */
+  .add-item-row {
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+  }
+
+  .add-item-btn {
+    width: 100%;
+    padding: 10px;
+  }
+}

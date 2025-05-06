@@ -791,21 +791,21 @@ const ClassicFormContent = ({ existingDocument = null, onDocumentUpdated = null 
             
             {documentData.items.map((item, index) => (
               <div className="invoice-item-row" key={index}>
-                <div className="item-col item-description">
+                <div className="item-col item-description" data-label="Description">
                   <textarea
                     value={item.description}
                     onChange={(e) => handleItemChange(index, 'description', e.target.value)}
                     placeholder="Description of item/service..."
                   />
                 </div>
-                <div className="item-col item-quantity">
+                <div className="item-col item-quantity" data-label="Quantity">
                   <input 
                     type="number"
                     value={item.quantity}
                     onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
                   />
                 </div>
-                <div className="item-col item-rate">
+                <div className="item-col item-rate" data-label="Rate">
                   <div className="currency-input">
                     <span>{getCurrencySymbol()}</span>
                     <input
@@ -815,7 +815,7 @@ const ClassicFormContent = ({ existingDocument = null, onDocumentUpdated = null 
                     />
                   </div>
                 </div>
-                <div className="item-col item-amount item-actions">
+                <div className="item-col item-amount item-actions" data-label="Amount">
                   {formatCurrency(item.amount)}
                   {documentData.items.length > 1 && (
                     <button 
