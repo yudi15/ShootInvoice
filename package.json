@@ -2,7 +2,7 @@
   "engines": {
     "node": "20.18.0"
   },
-  "name": "Shoot-Invoice-generator",
+  "name": "shoot-invoice-generator",
   "version": "1.0.0",
   "description": "Document generation system",
   "main": "server/server.js",
