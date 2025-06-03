@@ -2,9 +2,9 @@
   "engines": {
     "node": "20.18.0"
   },
-  "name": "mern-document-generator",
+  "name": "Shoot-Invoice-generator",
   "version": "1.0.0",
-  "description": "Document generation system with MERN stack",
+  "description": "Document generation system",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js",
